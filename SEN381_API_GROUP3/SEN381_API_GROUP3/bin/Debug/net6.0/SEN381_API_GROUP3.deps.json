@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "SEN381_API_GROUP3/1.0.0": {
+        "runtime": {
+          "SEN381_API_GROUP3.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SEN381_API_GROUP3/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
