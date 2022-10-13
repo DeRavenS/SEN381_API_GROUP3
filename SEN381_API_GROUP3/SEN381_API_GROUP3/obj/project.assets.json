@@ -678,8 +678,11 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "Microsoft.OpenApi >= 1.2.3",
       "Swashbuckle.AspNetCore >= 6.2.3",
-      "System.Data.SqlClient >= 4.8.3"
+      "System.Data.SqlClient >= 4.8.3",
+      "runtime.native.System.Data.SqlClient.sni >= 4.7.0",
+      "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni >= 4.4.0"
     ]
   },
   "packageFolders": {
@@ -721,6 +724,10 @@
       "net6.0": {
         "targetAlias": "net6.0",
         "dependencies": {
+          "Microsoft.OpenApi": {
+            "target": "Package",
+            "version": "[1.2.3, )"
+          },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
             "version": "[6.2.3, )"
@@ -728,6 +735,14 @@
           "System.Data.SqlClient": {
             "target": "Package",
             "version": "[4.8.3, )"
+          },
+          "runtime.native.System.Data.SqlClient.sni": {
+            "target": "Package",
+            "version": "[4.7.0, )"
+          },
+          "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni": {
+            "target": "Package",
+            "version": "[4.4.0, )"
           }
         },
         "imports": [

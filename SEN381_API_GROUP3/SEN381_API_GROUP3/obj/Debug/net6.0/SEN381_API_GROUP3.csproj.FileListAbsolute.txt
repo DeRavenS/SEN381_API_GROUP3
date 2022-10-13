@@ -25,3 +25,9 @@ C:\Uni\Uni\SEN\Project\SEN381_API_GROUP3\SEN381_API_GROUP3\obj\Debug\net6.0\refi
 C:\Uni\Uni\SEN\Project\SEN381_API_GROUP3\SEN381_API_GROUP3\obj\Debug\net6.0\SEN381_API_GROUP3.pdb
 C:\Uni\Uni\SEN\Project\SEN381_API_GROUP3\SEN381_API_GROUP3\obj\Debug\net6.0\SEN381_API_GROUP3.genruntimeconfig.cache
 C:\Uni\Uni\SEN\Project\SEN381_API_GROUP3\SEN381_API_GROUP3\obj\Debug\net6.0\ref\SEN381_API_GROUP3.dll
+C:\Uni\Uni\SEN\Project\SEN381_API_Group3\SEN381_API_GROUP3\bin\Debug\net6.0\System.Data.SqlClient.dll
+C:\Uni\Uni\SEN\Project\SEN381_API_Group3\SEN381_API_GROUP3\bin\Debug\net6.0\runtimes\win-arm64\native\sni.dll
+C:\Uni\Uni\SEN\Project\SEN381_API_Group3\SEN381_API_GROUP3\bin\Debug\net6.0\runtimes\win-x64\native\sni.dll
+C:\Uni\Uni\SEN\Project\SEN381_API_Group3\SEN381_API_GROUP3\bin\Debug\net6.0\runtimes\win-x86\native\sni.dll
+C:\Uni\Uni\SEN\Project\SEN381_API_Group3\SEN381_API_GROUP3\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Uni\Uni\SEN\Project\SEN381_API_Group3\SEN381_API_GROUP3\bin\Debug\net6.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
