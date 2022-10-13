@@ -18,7 +18,7 @@ namespace SEN381_API_GROUP3.Controllers
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
             
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[MedicalServiceProvider]", scon);
+            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Client]", scon);
             SqlDataReader read = command.ExecuteReader();
 
             string temp = "";
