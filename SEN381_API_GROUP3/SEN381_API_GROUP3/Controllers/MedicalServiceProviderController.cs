@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IIS;
 using SEN381_API_GROUP3.Database;
 using System.Data;
+using System.Web;
 using System.Data.SqlClient;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,24 +16,26 @@ namespace SEN381_API_GROUP3.Controllers
     {
         // GET: api/<MedicalServiceProviderController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<MedicalServiceProvider> Get(int page, int size)
         {   
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            
             SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[MedicalServiceProvider]", scon);
+            //command.Parameters.AddWithValue("@offset", page);
+            //command.Parameters.AddWithValue("@limit", size);
             SqlDataReader read = command.ExecuteReader();
 
-            string temp = "";
-
+            List<MedicalServiceProvider> providers = new List<MedicalServiceProvider>();
             while (read.Read())
             {
-                Console.WriteLine(read.GetInt32(0));
-                temp = read.GetString(1);
+                providers.Add(new MedicalServiceProvider(read.GetInt32(0).ToString(),read.GetString(1),read.GetString(2),read.GetString(3)));
             }
 
             scon.Close();
-            return new string[] { temp, "value2" };
+            return providers;
+            
+            
+            
         }
 
         // GET api/<MedicalServiceProviderController>/5
