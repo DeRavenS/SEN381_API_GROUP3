@@ -45,6 +45,14 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "DevExpress.Data": {
+              "target": "Package",
+              "version": "[22.1.5, )"
+            },
+            "Extended.Wpf.Toolkit": {
+              "target": "Package",
+              "version": "[4.4.0, )"
+            },
             "Microsoft.OpenApi": {
               "target": "Package",
               "version": "[1.2.3, )"
