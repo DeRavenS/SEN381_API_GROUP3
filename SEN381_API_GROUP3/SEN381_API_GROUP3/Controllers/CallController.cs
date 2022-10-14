@@ -62,7 +62,6 @@ namespace SEN381_API_GROUP3.Controllers
 
 
             return modules;
-            scon.Close();
         }
 
         // POST api/<CallController>
