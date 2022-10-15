@@ -46,7 +46,6 @@ namespace SEN381_API_GROUP3.Controllers
             List<MedicalServiceProvider> modules = new List<MedicalServiceProvider>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            // Select * from Client where ClientID = 1
             SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Client] where ClientID = " + id, scon);
             SqlDataReader reader = command.ExecuteReader();
 
