@@ -17,12 +17,16 @@ namespace SEN381_API_GROUP3.Controllers
         // GET: api/<MedicalServiceProviderController>
         [HttpGet]
         public IEnumerable<MedicalServiceProvider> Get(int page, int size)
-        {   
+        {
+            int offset = page * size;
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[MedicalServiceProvider]", scon);
-            //command.Parameters.AddWithValue("@offset", page);
-            //command.Parameters.AddWithValue("@limit", size);
+            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[MedicalServiceProvider]" +
+                                                "ORDER BY [MedicalServiceProvidorID]" +
+                                                "OFFSET @offset ROWS " +
+                                                "FETCH NEXT @size ROWS ONLY;", scon);
+            command.Parameters.AddWithValue("@offset", offset);
+            command.Parameters.AddWithValue("@size", size);
             SqlDataReader read = command.ExecuteReader();
 
             List<MedicalServiceProvider> providers = new List<MedicalServiceProvider>();
