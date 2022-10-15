@@ -23,9 +23,9 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpGet(Name = "Client Controller")]
         public List<Client> Get(int page, int size)
         {
-<<<<<<< HEAD
+
             return new ClientService().getClients(page, size);
-=======
+
             int offset = (page - 1) * size;
             List<Client> modules = new List<Client>();
             Connection con = new Connection();
@@ -46,7 +46,6 @@ namespace SEN381_API_GROUP3.Controllers
 
 
             return modules;
->>>>>>> 0e89060509f7247b65051d8edf5ea8b66c16487f
         }
 
 

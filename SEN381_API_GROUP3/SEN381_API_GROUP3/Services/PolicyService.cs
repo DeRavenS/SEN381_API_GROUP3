@@ -24,11 +24,12 @@ namespace SEN381_API_GROUP3.Services
                 "                                            PolicyStatus ps " +
                 "                                        WHERE ps.PolicyID=p.PolicyID " +
                 "                                        ORDER BY " +
-                "                                            ps.PolicyStatusDate DESC) as ca" +
-                "                               ON p.PolicyID = ps.PolicyID " +
+                "                                            ps.PolicyStatusDate DESC) as ca"+
                 "                               ORDER BY " +
                 "                                        p.PolicyID " +
                 "                               OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY ", scon);
+            command.Parameters.AddWithValue("@offset", page*size);
+            command.Parameters.AddWithValue("@size", size);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -63,8 +64,7 @@ namespace SEN381_API_GROUP3.Services
                 "                                            PolicyStatus ps " +
                 "                                        WHERE ps.PolicyID=p.PolicyID " +
                 "                                        ORDER BY " +
-                "                                            ps.PolicyStatusDate DESC) as ca" +
-                "                               ON p.PolicyID = ps.PolicyID " +
+                "                                            ps.PolicyStatusDate DESC) as ca"+
                 "                               WHERE p.PolicyID = @id", scon);
             command.Parameters.AddWithValue("@id", int.Parse(id));
 
