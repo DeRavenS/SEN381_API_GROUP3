@@ -16,7 +16,7 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpGet]
         public List<CallDetails> Get(int page, int size)
         {
-            int offset = page * size;
+            int offset = (page - 1) * size;
 
             List<CallDetails> modules = new List<CallDetails>();
             Connection con = new Connection();

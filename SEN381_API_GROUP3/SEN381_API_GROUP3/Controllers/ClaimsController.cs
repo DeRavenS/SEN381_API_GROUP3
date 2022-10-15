@@ -15,7 +15,7 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpGet]
         public List<Claim> Get(int page, int size)
         {
-            int offset = page * size;
+            int offset = (page - 1) * size;
             List<Claim> modules = new List<Claim>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();

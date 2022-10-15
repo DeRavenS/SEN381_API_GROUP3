@@ -21,7 +21,7 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpGet]
         public List<Client> Get(int page, int size)
         {
-            int offset = page * size;
+            int offset = (page - 1) * size;
             List<Client> modules = new List<Client>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
@@ -47,9 +47,9 @@ namespace SEN381_API_GROUP3.Controllers
 
         // GET api/<ClientController>/5
         [HttpGet("{id:int}")]
-        public List<string> Get(int id)
+        public List<Client> Get(int id)
         {
-            List<string> modules = new List<string>();
+            List<Client> modules = new List<Client>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
             // Select * from Client where ClientID = 1
@@ -60,9 +60,7 @@ namespace SEN381_API_GROUP3.Controllers
             {
                 while (reader.Read())
                 {
-                    modules.Add(reader.GetValue(1).ToString());
-                    modules.Add(reader.GetValue(2).ToString());
-                    modules.Add(reader.GetValue(3).ToString());
+                    modules.Add(new Client(reader.GetInt32(0).ToString(), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6), reader.GetString(7), reader.GetString(8)));
 
                 }
             }
