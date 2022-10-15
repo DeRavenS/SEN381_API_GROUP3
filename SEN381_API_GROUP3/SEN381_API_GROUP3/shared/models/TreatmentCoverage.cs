@@ -2,18 +2,21 @@
 
 public abstract class TreatmentCoverage
 {
-    String coverageID;
-    String coverageDescription;
+    int coverageID;
+    string coverageDescription;
     int numberOfGeneralVisits;
     int numberOfSpecialistsVisits;
+    int totalCoverageUser;
 
 
-    public TreatmentCoverage(string coverageID, string coverageDescription, int numberOfGeneralVisits, int numberOfSpecialistsVisits)
+
+    public TreatmentCoverage(int coverageID, string coverageDescription, int numberOfGeneralVisits, int numberOfSpecialistsVisits, int totalCoverageUser)
     {
         this.coverageID = coverageID;
         this.coverageDescription = coverageDescription;
         this.numberOfGeneralVisits = numberOfGeneralVisits;
         this.numberOfSpecialistsVisits = numberOfSpecialistsVisits;
+        this.totalCoverageUser = totalCoverageUser;
     }
 
     public TreatmentCoverage()
@@ -21,8 +24,12 @@ public abstract class TreatmentCoverage
     }
 
 
-    public string CoverageID { get => coverageID; set => coverageID = value; }
+    public int CoverageID { get => coverageID; set => coverageID = value; }
     public string CoverageDescription { get => coverageDescription; set => coverageDescription = value; }
     public int NumberOfGeneralVisits { get => numberOfGeneralVisits; set => numberOfGeneralVisits = value; }
     public int NumberOfSpecialistsVisits { get => numberOfSpecialistsVisits; set => numberOfSpecialistsVisits = value; }
+    public int TotalCoverageUser { get => totalCoverageUser; set => totalCoverageUser = value; }
+
+
+
 }
