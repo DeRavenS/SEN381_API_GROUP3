@@ -55,7 +55,6 @@ namespace SEN381_API_GROUP3.Controllers
             List<TreatmentCoverage> modules = new List<TreatmentCoverage>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            // Select * from Client where ClientID = 1
             SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Coverage] where CoverageID = " + id, scon);
             SqlDataReader reader = command.ExecuteReader();
 
