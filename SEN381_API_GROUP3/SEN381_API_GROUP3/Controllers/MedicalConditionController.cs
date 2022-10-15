@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using SEN381_API_GROUP3.Services;
 
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace SEN381_API_GROUP3.Controllers
 {
