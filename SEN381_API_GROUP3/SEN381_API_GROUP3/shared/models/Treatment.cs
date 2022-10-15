@@ -2,12 +2,12 @@
 
 public class Treatment
 {
-    String treatmentID;
-    String treatmentName;
-    String treatmentDescription;
-    List<MedicalServiceProvider> medicalServiceProviders;
+    string treatmentID;
+    string treatmentName;
+    string treatmentDescription;
+    string medicalServiceProviders;
 
-    public Treatment(string treatmentID, string treatmentName, string treatmentDescription, List<MedicalServiceProvider> medicalServiceProviders)
+    public Treatment(string treatmentID, string treatmentName, string treatmentDescription, string medicalServiceProviders)
     {
         this.treatmentID = treatmentID;
         this.treatmentName = treatmentName;
@@ -18,5 +18,5 @@ public class Treatment
     public string TreatmentID { get => treatmentID; set => treatmentID = value; }
     public string TreatmentName { get => treatmentName; set => treatmentName = value; }
     public string TreatmentDescription { get => treatmentDescription; set => treatmentDescription = value; }
-    public List<MedicalServiceProvider> MedicalServiceProviders { get => medicalServiceProviders; set => medicalServiceProviders = value; }
+    public string MedicalServiceProviders { get => medicalServiceProviders; set => medicalServiceProviders = value; }
 }

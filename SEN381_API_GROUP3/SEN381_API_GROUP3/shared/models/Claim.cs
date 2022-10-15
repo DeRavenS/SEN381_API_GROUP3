@@ -2,26 +2,30 @@
 
 public class Claim
 {
-    String claimID;
-    Client client;
-    List<MedicalCondition> medicalConditions;
-    String placeOfTreatment;
-    CallDetails? callDetails = null;
+    string claimID;
+    string client;
+    string medicalConditions;
+    string placeOfTreatment;
+    string? callDetails = null;
+    string claimeStatus;
 
-    public Claim(string claimID, Client client, List<MedicalCondition> medicalConditions, string placeOfTreatment, CallDetails? callDetails)
+    public Claim(string claimID, string client, string medicalConditions, string placeOfTreatment, string? callDetails, string claimeStatus)
     {
         this.claimID = claimID;
         this.client = client;
         this.medicalConditions = medicalConditions;
         this.placeOfTreatment = placeOfTreatment;
         this.callDetails = callDetails;
+        this.claimeStatus = claimeStatus;
     }
 
+
     public string ClaimID { get => claimID; set => claimID = value; }
-    public Client Client { get => client; set => client = value; }
-    public List<MedicalCondition> MedicalConditions { get => medicalConditions; set => medicalConditions = value; }
+    public string Client { get => client; set => client = value; }
+    public string MedicalConditions { get => medicalConditions; set => medicalConditions = value; }
     public string PlaceOfTreatment { get => placeOfTreatment; set => placeOfTreatment = value; }
-    public CallDetails? CallDetails { get => callDetails; set => callDetails = value; }
+    public string? CallDetails { get => callDetails; set => callDetails = value; }
+    public string ClaimeStatus { get => claimeStatus; set => claimeStatus = value; }
 
 
     public Boolean isValid()//Make sure claim is valid

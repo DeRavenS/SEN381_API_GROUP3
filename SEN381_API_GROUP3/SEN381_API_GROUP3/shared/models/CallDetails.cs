@@ -13,6 +13,10 @@ public class CallDetails
         this.endTime = endTime;
     }
 
+    public CallDetails()
+    {
+    }
+
     public string CallDetailsID { get => callDetailsID; set => callDetailsID = value; }
     public DateTime StartTime { get => startTime; set => startTime = value; }
     public DateTime EndTime { get => endTime; set => endTime = value; }

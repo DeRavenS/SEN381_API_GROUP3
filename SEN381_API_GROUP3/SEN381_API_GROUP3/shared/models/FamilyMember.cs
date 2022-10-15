@@ -9,8 +9,9 @@ public class FamilyMember{
     private string address;
     private string IdNumber;
     private string role;
+    private int clientID;
 
-    public FamilyMember(string memberId, string memberName, string memberSurname, string phoneNumber, string email, string address, string idNumber, string role)
+    public FamilyMember(string memberId, string memberName, string memberSurname, string phoneNumber, string email, string address, string idNumber, string role, int clientID)
     {
         this.memberId = memberId;
         this.memberName = memberName;
@@ -20,6 +21,7 @@ public class FamilyMember{
         this.address = address;
         this.IdNumber = idNumber;
         this.role = role;
+        this.clientID = clientID;
     }
 
     public string MemberId { get => memberId; set => memberId = value; }

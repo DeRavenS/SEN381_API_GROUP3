@@ -2,19 +2,23 @@
 
 public class MedicalCondition
 {
-    String medicalConditionID;
-    String medicalConditionName;
-    List<Treatment> treatments;
+    string medicalConditionID;
+    string medicalConditionName;
+    string medicalConditionDescription;
+    string treatments;
 
-    public MedicalCondition(string medicalConditionID, string medicalConditionName, List<Treatment> treatments)
+    public MedicalCondition(string medicalConditionID, string medicalConditionName, string medicalConditionDescription, string treatments )
     {
         this.medicalConditionID = medicalConditionID;
         this.medicalConditionName = medicalConditionName;
+        this.medicalConditionDescription = medicalConditionDescription;
         this.treatments = treatments;
+
     }
 
     public string MedicalConditionID { get => medicalConditionID; set => medicalConditionID = value; }
     public string MedicalConditionName { get => medicalConditionName; set => medicalConditionName = value; }
-    public List<Treatment> Treatments { get => treatments; set => treatments = value; }
+    public string MedicalConditionDescription { get => medicalConditionDescription; set => medicalConditionDescription = value; }
+    public string Treatments { get => treatments; set => treatments = value; }
 
 }
