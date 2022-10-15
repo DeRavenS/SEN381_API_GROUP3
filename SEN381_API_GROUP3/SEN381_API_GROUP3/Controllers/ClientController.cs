@@ -36,8 +36,6 @@ namespace SEN381_API_GROUP3.Controllers
                 while (reader.Read())
                 {
                     modules.Add(new Client(reader.GetInt32(0).ToString(),reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6), reader.GetString(7), reader.GetString(8)));
-
-
                 }
             }
 
