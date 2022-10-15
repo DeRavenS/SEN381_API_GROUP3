@@ -18,7 +18,7 @@ namespace SEN381_API_GROUP3.Controllers
     public class ClientController : ControllerBase
     {
         // GET: api/<ClientController>
-        [HttpGet]
+        [HttpGet(Name = "Client Controller")]
         public List<Client> Get(int page, int size)
         {
             int offset = (page - 1) * size;
