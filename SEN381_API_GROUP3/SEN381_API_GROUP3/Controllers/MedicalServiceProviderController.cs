@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
+using SEN381_API_GROUP3.Services;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -17,49 +18,14 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpGet]
         public List<MedicalServiceProvider> Get(int page, int size)
         {
-            int offset = (page - 1) * size;
-            List<MedicalServiceProvider> modules = new List<MedicalServiceProvider>();
-            Connection con = new Connection();
-            SqlConnection scon = con.ConnectDatabase();
-
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[MedicalServiceProvidor] ORDER BY MedicalServiceProvidorID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;", scon);
-            command.Parameters.AddWithValue("@offset", offset);
-            command.Parameters.AddWithValue("@size", size);
-            SqlDataReader reader = command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    modules.Add(new MedicalServiceProvider(reader.GetInt32(0).ToString(), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)));
-                }
-            }
-
-
-            return modules;
+            return MedicalServiceProviderService.getProviderList(page, size);
         }
 
         // GET api/<MedicalServiceProviderController>/5
         [HttpGet("{id}")]
-        public List<MedicalServiceProvider> Get(int id)
+        public MedicalServiceProvider Get(int id)
         {
-            List<MedicalServiceProvider> modules = new List<MedicalServiceProvider>();
-            Connection con = new Connection();
-            SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Client] where ClientID = " + id, scon);
-            SqlDataReader reader = command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    modules.Add(new MedicalServiceProvider(reader.GetInt32(0).ToString(), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)));
-
-                }
-            }
-
-
-            return modules;
+            return MedicalServiceProviderService.getProviderByID(id);
         }
 
         // POST api/<MedicalServiceProviderController>
