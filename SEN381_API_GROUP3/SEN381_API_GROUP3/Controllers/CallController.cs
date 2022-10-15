@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
 using System.Data;
 using System.Data.SqlClient;
@@ -13,22 +14,25 @@ namespace SEN381_API_GROUP3.Controllers
     {
         // GET: api/<CallController>
         [HttpGet]
-        public List<string> Get()
+        public List<CallDetails> Get(int page, int size)
         {
-            List<string> modules = new List<string>();
+            int offset = page * size;
+
+            List<CallDetails> modules = new List<CallDetails>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[CallDetails]", scon);
+            SqlCommand command = new SqlCommand($@"SELECT * FROM [dbo].[CallDetails] ORDER BY CALLID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;" , scon);
+            command.Parameters.AddWithValue("@offset", offset);
+            command.Parameters.AddWithValue("@size", size);
             SqlDataReader reader = command.ExecuteReader();
-
+            
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    modules.Add(reader.GetValue(0).ToString());
-                    modules.Add(reader.GetValue(1).ToString());
-                    modules.Add(reader.GetValue(2).ToString());
+
+                    modules.Add(new CallDetails(reader.GetInt32(0).ToString(), reader.GetDateTime(1), reader.GetDateTime(2)));
 
 
                 }
@@ -40,12 +44,11 @@ namespace SEN381_API_GROUP3.Controllers
 
         // GET api/<CallController>/5
         [HttpGet("{id:int}")]
-        public List<string> Get(int id)
+        public List<CallDetails> Get(int id)
         {
-            List<string> modules = new List<string>();
+            List<CallDetails> modules = new List<CallDetails>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            // Select * from Client where ClientID = 1
             SqlCommand command = new SqlCommand($@"SELECT * FROM [dbo].[CallDetails] where CALLID = '{id}'" , scon);
             SqlDataReader reader = command.ExecuteReader();
 
@@ -53,10 +56,7 @@ namespace SEN381_API_GROUP3.Controllers
             {
                 while (reader.Read())
                 {
-                    modules.Add(reader.GetValue(1).ToString());
-                    modules.Add(reader.GetValue(2).ToString());
-
-
+                    modules.Add(new CallDetails(reader.GetInt32(0).ToString(), reader.GetDateTime(1), reader.GetDateTime(2)));
                 }
             }
 

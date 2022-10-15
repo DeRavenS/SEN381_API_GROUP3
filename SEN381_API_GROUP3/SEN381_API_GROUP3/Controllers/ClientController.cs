@@ -1,5 +1,6 @@
 ﻿using DevExpress.Utils.CommonDialogs.Internal;
 using Microsoft.AspNetCore.Mvc;
+using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
 using System.Data;
 using System.Data.SqlClient;
@@ -18,23 +19,24 @@ namespace SEN381_API_GROUP3.Controllers
     {
         // GET: api/<ClientController>
         [HttpGet]
-        public List<string> Get()
+        public List<Client> Get(int page, int size)
         {
-            List<string> modules = new List<string>();
+            int offset = page * size;
+            List<Client> modules = new List<Client>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Client]", scon);
+            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Client] ORDER BY ClientID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;", scon);
+            command.Parameters.AddWithValue("@offset", offset);
+            command.Parameters.AddWithValue("@size", size);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    modules.Add(reader.GetValue(0).ToString());
-                    modules.Add(reader.GetValue(1).ToString());
-                    modules.Add(reader.GetValue(2).ToString());
-                    modules.Add(reader.GetValue(3).ToString());
+                    modules.Add(new Client(reader.GetInt32(0).ToString(),reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6), reader.GetString(7), reader.GetString(8)));
+
 
                 }
             }
