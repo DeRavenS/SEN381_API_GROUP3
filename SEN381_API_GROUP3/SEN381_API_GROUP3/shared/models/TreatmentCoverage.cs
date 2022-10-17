@@ -1,6 +1,6 @@
 ﻿namespace SEN381_API_Group3.shared.models;
 
-public abstract class TreatmentCoverage
+public class TreatmentCoverage
 {
     int coverageID;
     string coverageDescription;
