@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Uni\\Uni\\SEN\\Project\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\SEN381_API_GROUP3.csproj": {}
+    "C:\\Uni\\Uni\\SEN\\Project\\SEN381_API_Group3\\SEN381_API_GROUP3\\SEN381_API_GROUP3.csproj": {}
   },
   "projects": {
-    "C:\\Uni\\Uni\\SEN\\Project\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\SEN381_API_GROUP3.csproj": {
+    "C:\\Uni\\Uni\\SEN\\Project\\SEN381_API_Group3\\SEN381_API_GROUP3\\SEN381_API_GROUP3.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Uni\\Uni\\SEN\\Project\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\SEN381_API_GROUP3.csproj",
+        "projectUniqueName": "C:\\Uni\\Uni\\SEN\\Project\\SEN381_API_Group3\\SEN381_API_GROUP3\\SEN381_API_GROUP3.csproj",
         "projectName": "SEN381_API_GROUP3",
-        "projectPath": "C:\\Uni\\Uni\\SEN\\Project\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\SEN381_API_GROUP3.csproj",
+        "projectPath": "C:\\Uni\\Uni\\SEN\\Project\\SEN381_API_Group3\\SEN381_API_GROUP3\\SEN381_API_GROUP3.csproj",
         "packagesPath": "C:\\Users\\stolt\\.nuget\\packages\\",
-        "outputPath": "C:\\Uni\\Uni\\SEN\\Project\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\obj\\",
+        "outputPath": "C:\\Uni\\Uni\\SEN\\Project\\SEN381_API_Group3\\SEN381_API_GROUP3\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\stolt\\AppData\\Roaming\\NuGet\\NuGet.Config",
