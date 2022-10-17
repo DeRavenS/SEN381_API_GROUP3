@@ -92,27 +92,25 @@ namespace SEN381_API_GROUP3.Services
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand("" +
-                "BEGIN TRANSACTION" +
-                "   INSERT INTO Policy(PolicyName) VALUES(@name);" +
-                "   INSERT INTO PolicyStatus(startTime,endTime,PolicyStatusDate) VALUES(@startTime,@endTime,@statusDate);" +
-                "   INSERT INTO PolicyTreatmentCoverage(TreatmentID,PolicyID,CoverageID) VALUES(@treatmentID,@policyID,@coverageID);" +
-                "END TRANSACTION",scon);
+            SqlCommand command = new SqlCommand(
+                "   INSERT INTO Policy(PolicyName) VALUES(@name); " +
+                "   INSERT INTO PolicyStatus(startTime,endTime,PolicyStatusDate) VALUES(@startTime,@endTime,@statusDate); "
+                ,scon);
 
             command.Parameters.AddWithValue("@name",req.PolicyName);
             command.Parameters.AddWithValue("@startTime", req.StartTime);
             command.Parameters.AddWithValue("@endTime", req.EndTime);
             command.Parameters.AddWithValue("@statusDate", DateTime.Today);
-            foreach (KeyValuePair<string, string> kvp in req.TreatmentCoverages)
-            {
-                Console.WriteLine(string.Format("Key = {0}, Value = {1}", kvp.Key, kvp.Value));
-                command.Parameters.AddWithValue("@treatmentID", kvp.Key);
-                command.Parameters.AddWithValue("@policyID", req.PolicyID);
-                command.Parameters.AddWithValue("@coverageID", kvp.Value);
-            }
-
             command.ExecuteNonQuery();
 
+            command = new SqlCommand("INSERT INTO PolicyTreatmentCoverage(TreatmentID,PolicyID,CoverageID) VALUES(@treatmentID,@policyID,@coverageID)");
+            command.Parameters.AddWithValue("@policyID", req.PolicyID);
+            foreach (KeyValuePair<string, string> kvp in req.TreatmentCoverages)//Adding multiple inserts to 1 table
+            {
+                command.Parameters["@treatmentID"].Value = int.Parse(kvp.Key);
+                command.Parameters["@coverageID"].Value = int.Parse(kvp.Value); 
+                command.ExecuteNonQuery();
+            }
 
             return req;
         }
@@ -121,21 +119,19 @@ namespace SEN381_API_GROUP3.Services
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand("" +
-                "BEGIN TRANSACTION" +
-
-                    "UPDATE Policy p" +
+            SqlCommand command = new SqlCommand(
+                    "UPDATE Policy " +
                     "SET " +
-                    "   p.PolicyName=@name" +
-                    "WHERE p.PolicyID=@ID;"+
+                    "   PolicyName=@name " +
+                    "WHERE PolicyID=@ID; "+
 
                     "INSERT INTO " +
-                    "   PolicyStatus" +
+                    "   PolicyStatus " +
                     "       (startTime,endTime,PolicyStatusDate) " +
-                    "   VALUES" +
-                    "       (@startTime,@endTime,@statusDate);"+
+                    "   VALUES " +
+                    "       (@startTime,@endTime,@statusDate);"
 
-                "END TRANSACTION",scon);
+                ,scon);
 
             command.Parameters.AddWithValue("@name", req.PolicyName);
             command.Parameters.AddWithValue("@startTime", req.StartTime);

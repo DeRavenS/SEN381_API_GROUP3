@@ -34,8 +34,9 @@ namespace SEN381_API_GROUP3.Controllers
 
         // PUT api/<PolicyController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Policy policy)
+        public IUpdatePolicyRequest Put(int id, [FromBody] IUpdatePolicyRequest policy)
         {
+            return new PolicyService().updatePolicy(id,policy);
         }
 
         // DELETE api/<PolicyController>/5
