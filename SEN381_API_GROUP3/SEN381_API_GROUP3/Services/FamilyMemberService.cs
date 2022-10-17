@@ -64,7 +64,7 @@ namespace SEN381_API_GROUP3.Services
         {
             string query = $@"INSERT INto FamilyMember
     (FamilyMemberName, FamilyMemberSurname, FamilyMemberPhone,FamilyMemberEmail, FamilyMemberAddress, FamilyIDnumber, FamilyRole,ClientID)
-VALUES('Jaco', 'Stoltz', '0831284591', 'JacoStoltzDaddy@gmail.com','26 Sonneveld street brakpan', '01073829358', 'Father', 3 )";
+VALUES('{FamilyMemberName}', '{FamilyMemberSurname}', '{FamilyMemberPhone}', '{FamilyMemberEmail}','{FamilyMemberAddress}', '{FamilyIDnumber}', '{FamilyRole}', {ClientID} )";
 
             SqlParameter FamilyMembername = new SqlParameter("@FamilyMemberName", SqlDbType.VarChar);
             SqlParameter FamilyMembersurname = new SqlParameter("@FamilyMemberSurname", SqlDbType.VarChar);
