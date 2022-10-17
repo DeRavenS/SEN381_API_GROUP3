@@ -1,6 +1,8 @@
 ﻿using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
 using System.Data.SqlClient;
+using System.Web.Http;
+using System.Net;
 
 namespace SEN381_API_GROUP3.Services
 {
@@ -12,8 +14,8 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
             SqlCommand command = new SqlCommand("SELECT " +
-                "                                       p.tbPolicyID, " +
-                "                                       p.tbPolicyname, " +
+                "                                       p.PolicyID, " +
+                "                                       p.Policyname, " +
                 "                                       ca.startTime, " +
                 "                                       ca.endTime " +
                 "                               FROM " +
@@ -39,10 +41,7 @@ namespace SEN381_API_GROUP3.Services
                     policies.Add(new Policy(reader.GetInt32(0).ToString(), reader.GetString(1), getStatus(reader.GetDateTime(2), reader.GetDateTime(3)), new List<Package>()));
                 }
             }
-            if (policies.Count() == 0)
-            {
-                throw new HttpRequestException();
-            }
+
             return policies;
         }
 
@@ -52,8 +51,8 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
             SqlCommand command = new SqlCommand("SELECT " +
-                "                                       p.tbPolicyID, " +
-                "                                       p.tbPolicyname, " +
+                "                                       p.PolicyID, " +
+                "                                       p.Policyname, " +
                 "                                       ca.startTime, " +
                 "                                       ca.endTime " +
                 "                               FROM " +
@@ -77,11 +76,11 @@ namespace SEN381_API_GROUP3.Services
                     policies.Add(new Policy(reader.GetInt32(0).ToString(), reader.GetString(1), getStatus(reader.GetDateTime(2),reader.GetDateTime(3)), new List<Package>()));
                 }
             }
-            if (policies.Count() == 0)
-            {
-                throw new HttpRequestException();
-            }
-            Policy policy = policies[0];
+            //if (policies.Count() == 0)
+            //{
+            //    throw new HttpResponseException(HttpStatusCode.NotFound);
+            //} TO DO ==> Implement Later
+
 
             return policies[0];
         }
