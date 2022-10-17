@@ -30,7 +30,7 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<TreatmentController>
         [HttpPost]
-        public void Post(string TreatmentName, string TreatmentDescription, int MedicalServiceProvidorID)
+        public void Post([FromBody] string TreatmentName, string TreatmentDescription, int MedicalServiceProvidorID)
         {
             new TreatmentService().addNewTreatment(TreatmentName, TreatmentDescription, MedicalServiceProvidorID);
 
@@ -38,14 +38,14 @@ namespace SEN381_API_GROUP3.Controllers
 
         // PUT api/<TreatmentController>/5
         [HttpPut("{id}")]
-        public void Put(int id, string TreatmentName, string TreatmentDescription, int MedicalServiceProvidorID)
+        public void Put([FromBody] int id, string TreatmentName, string TreatmentDescription, int MedicalServiceProvidorID)
         {
             new TreatmentService().updateTreatment(id, TreatmentName, TreatmentDescription, MedicalServiceProvidorID);
         }
 
         // DELETE api/<TreatmentController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete([FromBody] int id)
         {
             new TreatmentService().deleteTreatment(id);
         }
