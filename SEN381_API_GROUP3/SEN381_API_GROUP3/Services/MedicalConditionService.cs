@@ -76,7 +76,7 @@ namespace SEN381_API_GROUP3.Services
         }
         public void updateMedicalCondition(int id,string MedicalConditionName, string MedicalConditionDescription, int TreatmentID)
         {
-            string query = $@"Update Client set ClientName = '{MedicalConditionName}', ClientAddress = '{MedicalConditionDescription}', clientEmail = {TreatmentID} WHERE MedicalConditionID = {id}";
+            string query = $@"Update MedicalCondition set MedicalConditionName = '{MedicalConditionName}', MedicalConditionDescription = '{MedicalConditionDescription}', TreatmentID = {TreatmentID} WHERE MedicalConditionID = {id}";
 
             SqlParameter MedicalConditionname = new SqlParameter("@MedicalConditionName", SqlDbType.VarChar);
             SqlParameter MedicalConditiondescription = new SqlParameter("@MedicalConditionDescription", SqlDbType.VarChar);
