@@ -28,21 +28,21 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<FamilyMemberController>
         [HttpPost]
-        public void Post(string FamilyMemberName, string FamilyMemberSurname, string FamilyMemberPhone, string FamilyMemberEmail, string FamilyMemberAddress, string FamilyIDnumber, string FamilyRole, string ClientID)
+        public void Post([FromBody] string FamilyMemberName, string FamilyMemberSurname, string FamilyMemberPhone, string FamilyMemberEmail, string FamilyMemberAddress, string FamilyIDnumber, string FamilyRole, string ClientID)
         {
             new FamilyMemberService().addNewFamilyMemer( FamilyMemberName,  FamilyMemberSurname,  FamilyMemberPhone,  FamilyMemberEmail,  FamilyMemberAddress,  FamilyIDnumber,  FamilyRole,  ClientID);
         }
 
         // PUT api/<FamilyMemberController>/5
         [HttpPut("{id}")]
-        public void Put(int id, string FamilyMemberName, string FamilyMemberSurname, string FamilyMemberPhone, string FamilyMemberEmail, string FamilyMemberAddress, string FamilyIDnumber, string FamilyRole, string ClientID)
+        public void Put([FromBody] int id, string FamilyMemberName, string FamilyMemberSurname, string FamilyMemberPhone, string FamilyMemberEmail, string FamilyMemberAddress, string FamilyIDnumber, string FamilyRole, string ClientID)
         {
             new FamilyMemberService().updateFamilyMemer(id,FamilyMemberName, FamilyMemberSurname, FamilyMemberPhone, FamilyMemberEmail, FamilyMemberAddress, FamilyIDnumber, FamilyRole, ClientID);
         }
 
         // DELETE api/<FamilyMemberController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete([FromBody] int id)
         {
             new FamilyMemberService().deleteFamilyMember(id);
         }
