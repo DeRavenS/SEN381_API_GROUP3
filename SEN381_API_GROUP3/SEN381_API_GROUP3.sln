@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEN381_API_GROUP3", "SEN381_API_GROUP3\SEN381_API_GROUP3.csproj", "{7AAC8170-891B-417F-91B5-BAFA0E26C76A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7AAC8170-891B-417F-91B5-BAFA0E26C76A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AAC8170-891B-417F-91B5-BAFA0E26C76A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AAC8170-891B-417F-91B5-BAFA0E26C76A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AAC8170-891B-417F-91B5-BAFA0E26C76A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0D33A691-6A75-4B97-8D25-5783CFE235AE}
+	EndGlobalSection
+EndGlobal
