@@ -28,9 +28,9 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<FamilyMemberController>
         [HttpPost]
-        public void Post([FromBody] string FamilyMemberName, string FamilyMemberSurname, string FamilyMemberPhone, string FamilyMemberEmail, string FamilyMemberAddress, string FamilyIDnumber, string FamilyRole, string ClientID)
+        public void Post([FromBody] FamilyMember family)
         {
-            new FamilyMemberService().addNewFamilyMemer( FamilyMemberName,  FamilyMemberSurname,  FamilyMemberPhone,  FamilyMemberEmail,  FamilyMemberAddress,  FamilyIDnumber,  FamilyRole,  ClientID);
+            new FamilyMemberService().addNewFamilyMemer(family);
         }
 
         // PUT api/<FamilyMemberController>/5

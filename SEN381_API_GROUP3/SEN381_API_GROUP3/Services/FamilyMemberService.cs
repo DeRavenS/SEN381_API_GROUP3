@@ -60,11 +60,11 @@ namespace SEN381_API_GROUP3.Services
         }
 
         // Add new Family member
-        public void addNewFamilyMemer(string FamilyMemberName, string FamilyMemberSurname, string FamilyMemberPhone, string FamilyMemberEmail, string FamilyMemberAddress,string FamilyIDnumber, string FamilyRole, string ClientID)
+        public void addNewFamilyMember(FamilyMember family)
         {
             string query = $@"INSERT INto FamilyMember
     (FamilyMemberName, FamilyMemberSurname, FamilyMemberPhone,FamilyMemberEmail, FamilyMemberAddress, FamilyIDnumber, FamilyRole,ClientID)
-VALUES('{FamilyMemberName}', '{FamilyMemberSurname}', '{FamilyMemberPhone}', '{FamilyMemberEmail}','{FamilyMemberAddress}', '{FamilyIDnumber}', '{FamilyRole}', {ClientID} )";
+VALUES('{family.MemberName}', '{family.MemberSurname}', '{family.PhoneNumber}', '{family.Email}','{family.Address}', '{family.IdNumber1}', '{family.Role}', {family.ClientID} )";
 
             SqlParameter FamilyMembername = new SqlParameter("@FamilyMemberName", SqlDbType.VarChar);
             SqlParameter FamilyMembersurname = new SqlParameter("@FamilyMemberSurname", SqlDbType.VarChar);
@@ -75,14 +75,14 @@ VALUES('{FamilyMemberName}', '{FamilyMemberSurname}', '{FamilyMemberPhone}', '{F
             SqlParameter Familyrole = new SqlParameter("@FamilyRole", SqlDbType.VarChar);
             SqlParameter ClientId = new SqlParameter("@ClientID", SqlDbType.VarChar);
 
-            FamilyMembername.Value = FamilyMemberName.ToString();
-            FamilyMembersurname.Value = FamilyMemberSurname.ToString();
-            FamilyMemberphone.Value = FamilyMemberPhone.ToString();
-            FamilyMemberemail.Value = FamilyMemberEmail.ToString();
-            FamilyMemberaddress.Value = FamilyMemberAddress.ToString();
-            FamilyIdnumber.Value = FamilyIDnumber.ToString();
-            Familyrole.Value = FamilyRole.ToString();
-            ClientId.Value = ClientID.ToString();
+            FamilyMembername.Value = family.MemberName.ToString();
+            FamilyMembersurname.Value = family.MemberSurname.ToString();
+            FamilyMemberphone.Value = family.PhoneNumber.ToString();
+            FamilyMemberemail.Value = family.Email.ToString();
+            FamilyMemberaddress.Value = family.Address.ToString();
+            FamilyIdnumber.Value = family.IdNumber1.ToString();
+            Familyrole.Value = family.Role.ToString();
+            ClientId.Value = family.ClientID.ToString();
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
