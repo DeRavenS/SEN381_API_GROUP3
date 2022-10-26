@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\SEN381_API_GROUP3"
+    "\\SEN381_API_GROUP3",
+    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3",
+    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Controllers"
   ],
-  "SelectedNode": "\\SEN381_API_GROUP3\\SEN381_API_GROUP3.sln",
+  "SelectedNode": "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Controllers\\FamilyMemberController.cs",
   "PreviewInSolutionExplorer": false
 }

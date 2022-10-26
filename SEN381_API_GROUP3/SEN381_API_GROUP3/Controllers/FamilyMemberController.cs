@@ -23,7 +23,7 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpGet("{id}")]
         public List<FamilyMember> Get(int id)
         {
-            return new FamilyMemberService().getFamilyMemerById(id);
+            return new FamilyMemberService().getFamilyMemberById(id);
         }
 
         // POST api/<FamilyMemberController>
