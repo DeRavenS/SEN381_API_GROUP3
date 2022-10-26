@@ -39,7 +39,7 @@ namespace SEN381_API_GROUP3.Services
 
 
         // Get familymember by ID
-        public List<FamilyMember> getFamilyMemerById(int id)
+        public List<FamilyMember> getFamilyMemberById(int id)
         {
             List<FamilyMember> modules = new List<FamilyMember>();
             Connection con = new Connection();
