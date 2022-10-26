@@ -59,10 +59,9 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<ClientController>
         [HttpPost]
-        public void Post(string ClientName, string ClientAdress, string ClientEmail)
+        public void Post(string ClientName, string ClientSurname, string ClientAdress, string ClientEmail, string ClientPhonenumber, string ClientPolicies, string ClientStatus, string ClientAdHocNotes)
         {
-            new ClientService().addNewClient(ClientName, ClientAdress, ClientEmail);
-
+            new ClientService().addNewClient(ClientName,ClientSurname, ClientAdress, ClientEmail, ClientPhonenumber,ClientPolicies, ClientStatus, ClientAdHocNotes);
         }
 
 

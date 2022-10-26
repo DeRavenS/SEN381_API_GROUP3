@@ -58,17 +58,29 @@ namespace SEN381_API_GROUP3.Services
         }
 
         //Create / Add new Client
-        public void addNewClient(string ClientName, string ClientAdress, string ClientEmail)
+        public void addNewClient(string ClientName, string ClientSurname, string ClientAdress, string ClientEmail, string ClientPhonenumber, string ClientPolicies, string ClientStatus, string ClientAdHocNotes)
         {
-            string query = $@"INSERT INTO Client (ClientName, ClientAddress,clientEmail)VALUES('{ClientName}', '{ClientAdress}', '{ClientEmail}')";
+            string query = $@"INSERT INTO Client (ClientName, ClientSurname, ClientAddress,clientEmail,ClientPhonenumber,ClientPolicies,ClientStatus,ClientAdHocNotes)VALUES('{ClientName}','{ClientSurname}', '{ClientAdress}', '{ClientEmail}','{ClientPhonenumber}','{ClientPolicies}', '{ClientStatus}', '{ClientAdHocNotes}')";
 
             SqlParameter Clientname = new SqlParameter("@ClientName", SqlDbType.VarChar);
+            SqlParameter Clientsurname = new SqlParameter("@ClientSurname", SqlDbType.VarChar);
             SqlParameter Clientadress = new SqlParameter("@ClientAdress", SqlDbType.VarChar);
             SqlParameter Clientemail = new SqlParameter("@ClientEmail", SqlDbType.VarChar);
+            SqlParameter ClientphoneNumber = new SqlParameter("@ClientPhonenumber", SqlDbType.VarChar);
+            SqlParameter Clientpolicies = new SqlParameter("@ClientPolicies", SqlDbType.VarChar);
+            SqlParameter Clientstatus = new SqlParameter("@ClientStatus", SqlDbType.VarChar);
+            SqlParameter ClientadHocNotes = new SqlParameter("@ClientAdHocNotes", SqlDbType.VarChar);
+
 
             Clientname.Value = ClientName.ToString();
+            Clientsurname.Value = ClientSurname.ToString();
             Clientadress.Value = ClientAdress.ToString();
             Clientemail.Value = ClientEmail.ToString();
+            ClientphoneNumber.Value = ClientPhonenumber.ToString();
+            Clientpolicies.Value = ClientPolicies.ToString();
+            Clientstatus.Value = ClientStatus.ToString();
+            ClientadHocNotes.Value = ClientAdHocNotes.ToString();
+
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
@@ -76,8 +88,13 @@ namespace SEN381_API_GROUP3.Services
 
             SqlCommand insertCommand = new SqlCommand(query, scon);
             insertCommand.Parameters.Add(Clientname);
+            insertCommand.Parameters.Add(Clientsurname);
             insertCommand.Parameters.Add(Clientadress);
             insertCommand.Parameters.Add(Clientemail);
+            insertCommand.Parameters.Add(ClientphoneNumber);
+            insertCommand.Parameters.Add(Clientpolicies);
+            insertCommand.Parameters.Add(Clientstatus);
+            insertCommand.Parameters.Add(ClientadHocNotes);
 
             insertCommand.ExecuteNonQuery();
             scon.Close();
