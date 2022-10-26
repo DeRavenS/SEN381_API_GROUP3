@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Services;
+using SEN381_API_GROUP3.shared.requests;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,14 +27,16 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<PolicyController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ICreatePolicyRequest Post([FromBody] ICreatePolicyRequest req)
         {
+            return new PolicyService().createPolicy(req);
         }
 
         // PUT api/<PolicyController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IUpdatePolicyRequest Put(int id, [FromBody] IUpdatePolicyRequest policy)
         {
+            return new PolicyService().updatePolicy(id,policy);
         }
 
         // DELETE api/<PolicyController>/5

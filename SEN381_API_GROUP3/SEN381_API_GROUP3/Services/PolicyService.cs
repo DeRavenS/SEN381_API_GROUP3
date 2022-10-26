@@ -1,8 +1,8 @@
 ﻿using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
+using SEN381_API_GROUP3.shared.requests;
+using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Web.Http;
-using System.Net;
 
 namespace SEN381_API_GROUP3.Services
 {
@@ -15,7 +15,7 @@ namespace SEN381_API_GROUP3.Services
             SqlConnection scon = con.ConnectDatabase();
             SqlCommand command = new SqlCommand("SELECT " +
                 "                                       p.PolicyID, " +
-                "                                       p.Policyname, " +
+                "                                       p.PolicyName, " +
                 "                                       ca.startTime, " +
                 "                                       ca.endTime " +
                 "                               FROM " +
@@ -41,7 +41,10 @@ namespace SEN381_API_GROUP3.Services
                     policies.Add(new Policy(reader.GetInt32(0).ToString(), reader.GetString(1), getStatus(reader.GetDateTime(2), reader.GetDateTime(3)), new List<Package>()));
                 }
             }
-
+            //if (policies.Count() == 0)
+            //{
+            //    throw new HttpRequestException();
+            //}
             return policies;
         }
 
@@ -51,8 +54,8 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
             SqlCommand command = new SqlCommand("SELECT " +
-                "                                       p.PolicyID, " +
-                "                                       p.Policyname, " +
+                "                                       p.tbPolicyID, " +
+                "                                       p.tbPolicyname, " +
                 "                                       ca.startTime, " +
                 "                                       ca.endTime " +
                 "                               FROM " +
@@ -76,13 +79,69 @@ namespace SEN381_API_GROUP3.Services
                     policies.Add(new Policy(reader.GetInt32(0).ToString(), reader.GetString(1), getStatus(reader.GetDateTime(2),reader.GetDateTime(3)), new List<Package>()));
                 }
             }
-            //if (policies.Count() == 0)
-            //{
-            //    throw new HttpResponseException(HttpStatusCode.NotFound);
-            //} TO DO ==> Implement Later
-
+            if (policies.Count() == 0)
+            {
+                throw new HttpRequestException();
+            }
+            Policy policy = policies[0];
 
             return policies[0];
+        }
+
+        public ICreatePolicyRequest createPolicy(ICreatePolicyRequest req)
+        {
+            Connection con = new Connection();
+            SqlConnection scon = con.ConnectDatabase();
+            SqlCommand command = new SqlCommand(
+                "   INSERT INTO Policy(PolicyName) VALUES(@name); " +
+                "   INSERT INTO PolicyStatus(startTime,endTime,PolicyStatusDate) VALUES(@startTime,@endTime,@statusDate); "
+                ,scon);
+
+            command.Parameters.AddWithValue("@name",req.PolicyName);
+            command.Parameters.AddWithValue("@startTime", req.StartTime);
+            command.Parameters.AddWithValue("@endTime", req.EndTime);
+            command.Parameters.AddWithValue("@statusDate", DateTime.Today);
+            command.ExecuteNonQuery();
+
+            command = new SqlCommand("INSERT INTO PolicyTreatmentCoverage(TreatmentID,PolicyID,CoverageID) VALUES(@treatmentID,@policyID,@coverageID)");
+            command.Parameters.AddWithValue("@policyID", req.PolicyID);
+            foreach (KeyValuePair<string, string> kvp in req.TreatmentCoverages)//Adding multiple inserts to 1 table
+            {
+                command.Parameters["@treatmentID"].Value = int.Parse(kvp.Key);
+                command.Parameters["@coverageID"].Value = int.Parse(kvp.Value); 
+                command.ExecuteNonQuery();
+            }
+
+            return req;
+        }
+
+        public IUpdatePolicyRequest updatePolicy(int id,IUpdatePolicyRequest req)
+        {
+            Connection con = new Connection();
+            SqlConnection scon = con.ConnectDatabase();
+            SqlCommand command = new SqlCommand(
+                    "UPDATE Policy " +
+                    "SET " +
+                    "   PolicyName=@name " +
+                    "WHERE PolicyID=@ID; "+
+
+                    "INSERT INTO " +
+                    "   PolicyStatus " +
+                    "       (startTime,endTime,PolicyStatusDate) " +
+                    "   VALUES " +
+                    "       (@startTime,@endTime,@statusDate);"
+
+                ,scon);
+
+            command.Parameters.AddWithValue("@name", req.PolicyName);
+            command.Parameters.AddWithValue("@startTime", req.StartTime);
+            command.Parameters.AddWithValue("@endTime", req.EndTime);
+            command.Parameters.AddWithValue("@statusDate", DateTime.Today);
+            command.Parameters.AddWithValue("@ID", id);
+
+            command.ExecuteNonQuery();
+
+            return req;
         }
 
         public static string getStatus(DateTime? start, DateTime? end)

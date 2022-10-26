@@ -32,6 +32,7 @@ public class FamilyMember{
     public string Address { get => address; set => address = value; }
     public string IdNumber1 { get => IdNumber; set => IdNumber = value; }
     public string Role { get => role; set => role = value; }
+    public int ClientID { get => clientID; set => clientID = value; }
 }
 
     

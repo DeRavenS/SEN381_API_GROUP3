@@ -3,6 +3,7 @@ using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
 using SEN381_API_GROUP3.Services;
 using System.Data.SqlClient;
+using static DevExpress.Xpo.DB.DataStoreLongrunnersWatch;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,40 +24,28 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpGet("{id}")]
         public List<Claim> Get(int id)
         {
-            List<Claim> modules = new List<Claim>();
-            Connection con = new Connection();
-            SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand($@"SELECT * FROM [dbo].[Claim] where CLAIMID = '{id}'", scon);
-            SqlDataReader reader = command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    modules.Add(new Claim(reader.GetInt32(0).ToString(), reader.GetInt32(1).ToString(), reader.GetInt32(2).ToString(), reader.GetString(3), reader.GetInt32(4).ToString(), reader.GetString(5)));
-                }
-            }
-
-
-            return modules;
+            return new ClaimService().getClaimById(id);
         }
 
         // POST api/<ClaimsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] int ClientID, int Medicalcondition, string PlaceOfTreament, int CallID, string ClaimeStatus)
         {
+             new ClaimService().addNewClaim(ClientID, Medicalcondition, PlaceOfTreament, CallID, ClaimeStatus);
         }
 
         // PUT api/<ClaimsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put([FromBody] int id, int ClientID, int MedicalCondition, string PlaceOfTreament, int CallID, string ClaimeStatus)
         {
+            new ClaimService().UpdateClaim(id, ClientID,  MedicalCondition,  PlaceOfTreament,  CallID,  ClaimeStatus);
         }
 
         // DELETE api/<ClaimsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete([FromBody] int id)
         {
+            new ClaimService().deleteClaim(id);
         }
     }
 }
