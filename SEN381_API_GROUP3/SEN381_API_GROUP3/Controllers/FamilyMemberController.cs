@@ -30,7 +30,7 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpPost]
         public void Post([FromBody] FamilyMember family)
         {
-            new FamilyMemberService().addNewFamilyMemer(family);
+            new FamilyMemberService().addNewFamilyMember(family);
         }
 
         // PUT api/<FamilyMemberController>/5
