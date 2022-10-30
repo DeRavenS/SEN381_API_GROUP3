@@ -58,9 +58,9 @@ namespace SEN381_API_GROUP3.Services
         }
 
         //Create / Add new Client
-        public void addNewClient(string ClientName, string ClientSurname, string ClientAdress, string ClientEmail, string ClientPhonenumber, string ClientPolicies, string ClientStatus, string ClientAdHocNotes)
+        public Client addNewClient(Client client)
         {
-            string query = $@"INSERT INTO Client (ClientName, ClientSurname, ClientAddress,clientEmail,ClientPhonenumber,ClientPolicies,ClientStatus,ClientAdHocNotes)VALUES('{ClientName}','{ClientSurname}', '{ClientAdress}', '{ClientEmail}','{ClientPhonenumber}','{ClientPolicies}', '{ClientStatus}', '{ClientAdHocNotes}')";
+            string query = $@"INSERT INTO Client (ClientName, ClientSurname, ClientAddress,clientEmail,ClientPhonenumber,ClientPolicies,ClientStatus,ClientAdHocNotes)VALUES('{client.ClientName}','{client.ClientSurname}', '{client.ClientAddress}', '{client.ClientEmail}','{client.ClientPhoneNumber}','{client.Policies}', '{client.ClientStatus}', '{client.ClientAdHocNotes}')";
 
             SqlParameter Clientname = new SqlParameter("@ClientName", SqlDbType.VarChar);
             SqlParameter Clientsurname = new SqlParameter("@ClientSurname", SqlDbType.VarChar);
@@ -72,14 +72,14 @@ namespace SEN381_API_GROUP3.Services
             SqlParameter ClientadHocNotes = new SqlParameter("@ClientAdHocNotes", SqlDbType.VarChar);
 
 
-            Clientname.Value = ClientName.ToString();
-            Clientsurname.Value = ClientSurname.ToString();
-            Clientadress.Value = ClientAdress.ToString();
-            Clientemail.Value = ClientEmail.ToString();
-            ClientphoneNumber.Value = ClientPhonenumber.ToString();
-            Clientpolicies.Value = ClientPolicies.ToString();
-            Clientstatus.Value = ClientStatus.ToString();
-            ClientadHocNotes.Value = ClientAdHocNotes.ToString();
+            Clientname.Value = client.ClientName.ToString();
+            Clientsurname.Value = client.ClientSurname.ToString();
+            Clientadress.Value = client.ClientAddress.ToString();
+            Clientemail.Value = client.ClientEmail.ToString();
+            ClientphoneNumber.Value = client.ClientPhoneNumber.ToString();
+            Clientpolicies.Value = client.Policies.ToString();
+            Clientstatus.Value = client.ClientStatus.ToString();
+            ClientadHocNotes.Value = client.ClientAdHocNotes.ToString();
 
 
             Connection con = new Connection();
@@ -97,32 +97,55 @@ namespace SEN381_API_GROUP3.Services
             insertCommand.Parameters.Add(ClientadHocNotes);
 
             insertCommand.ExecuteNonQuery();
+
             scon.Close();
+            return client;
         }
 
         //Update Client
-        public void updateClient(int id, string ClientName, string ClientAdress, string ClientEmail)
+        public Client updateClient(string id, Client client)
         {
+            Console.WriteLine("Update service");
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"Update Client set ClientName = '{ClientName}', ClientAddress = '{ClientAdress}', clientEmail = '{ClientEmail}' WHERE ClientID = '{id}'";
+            string query = $@"Update Client set ClientName = '{client.ClientName}',ClientSurname = '{client.ClientSurname}', ClientAddress = '{client.ClientAddress}', ClientEmail = '{client.ClientEmail}',ClientPhonenumber = '{client.ClientPhoneNumber}',ClientPolicies = '{client.Policies}',ClientStatus = '{client.ClientStatus}',ClientAdHocNotes = '{client.ClientAdHocNotes}' WHERE ClientID = '{id}'";
             SqlParameter Clientname = new SqlParameter("@ClientName", SqlDbType.VarChar);
+            SqlParameter Clientsurname = new SqlParameter("@ClientSurname", SqlDbType.VarChar);
             SqlParameter Clientadress = new SqlParameter("@ClientAdress", SqlDbType.VarChar);
             SqlParameter Clientemail = new SqlParameter("@ClientEmail", SqlDbType.VarChar);
-            Clientname.Value = ClientName.ToString();
-            Clientadress.Value = ClientAdress.ToString();
-            Clientemail.Value = ClientEmail.ToString();
+            SqlParameter ClientphoneNumber = new SqlParameter("@ClientPhonenumber", SqlDbType.VarChar);
+            SqlParameter Clientpolicies = new SqlParameter("@ClientPolicies", SqlDbType.VarChar);
+            SqlParameter Clientstatus = new SqlParameter("@ClientStatus", SqlDbType.VarChar);
+            SqlParameter ClientadHocNotes = new SqlParameter("@ClientAdHocNotes", SqlDbType.VarChar);
+
+
+            Clientname.Value = client.ClientName.ToString();
+            Clientsurname.Value = client.ClientSurname.ToString();
+            Clientadress.Value = client.ClientAddress.ToString();
+            Clientemail.Value = client.ClientEmail.ToString();
+            ClientphoneNumber.Value = client.ClientPhoneNumber.ToString();
+            Clientpolicies.Value = client.Policies.ToString();
+            Clientstatus.Value = client.ClientStatus.ToString();
+            ClientadHocNotes.Value = client.ClientAdHocNotes.ToString();
+
             SqlCommand updateCommand = new(query, scon);
+
             updateCommand.Parameters.Add(Clientname);
+            updateCommand.Parameters.Add(Clientsurname);
             updateCommand.Parameters.Add(Clientadress);
             updateCommand.Parameters.Add(Clientemail);
+            updateCommand.Parameters.Add(ClientphoneNumber);
+            updateCommand.Parameters.Add(Clientpolicies);
+            updateCommand.Parameters.Add(Clientstatus);
+            updateCommand.Parameters.Add(ClientadHocNotes);
 
             updateCommand.ExecuteNonQuery();
             scon.Close();
+            return client;
         }
 
         //Delete Client
-        public void deleteClient(int id)
+        public void deleteClient(string id)
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();

@@ -17,6 +17,7 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpGet]
         public List<Claim> Get(int page, int size)
         {
+            Console.WriteLine("write");
             return new ClaimService().getClaims(page, size);
         }
 

@@ -3,8 +3,9 @@
     "",
     "\\SEN381_API_GROUP3",
     "\\SEN381_API_GROUP3\\SEN381_API_GROUP3",
-    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Controllers"
+    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Controllers",
+    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Services"
   ],
-  "SelectedNode": "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Controllers\\FamilyMemberController.cs",
+  "SelectedNode": "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Services\\ClientService.cs",
   "PreviewInSolutionExplorer": false
 }

@@ -26,26 +26,6 @@ namespace SEN381_API_GROUP3.Controllers
 
             return new ClientService().getClients(page, size);
 
-            int offset = (page - 1) * size;
-            List<Client> modules = new List<Client>();
-            Connection con = new Connection();
-            SqlConnection scon = con.ConnectDatabase();
-
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Client] ORDER BY ClientID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;", scon);
-            command.Parameters.AddWithValue("@offset", offset);
-            command.Parameters.AddWithValue("@size", size);
-            SqlDataReader reader = command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    modules.Add(new Client(reader.GetInt32(0).ToString(),reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6), reader.GetString(7), reader.GetString(8)));
-                }
-            }
-
-
-            return modules;
         }
 
 
@@ -59,22 +39,24 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<ClientController>
         [HttpPost]
-        public void Post(string ClientName, string ClientSurname, string ClientAdress, string ClientEmail, string ClientPhonenumber, string ClientPolicies, string ClientStatus, string ClientAdHocNotes)
+        public Client Post(Client client)
         {
-            new ClientService().addNewClient(ClientName,ClientSurname, ClientAdress, ClientEmail, ClientPhonenumber,ClientPolicies, ClientStatus, ClientAdHocNotes);
+            Console.WriteLine("client name");
+            return new ClientService().addNewClient(client);
+
         }
-
-
         // PUT api/<ClientController>/5
-        [HttpPut("{id:int}")]
-        public void Put(int id, string ClientName, string ClientAdress, string ClientEmail)
+        [HttpPut("{id}")]
+        public Client Put(string id, Client client)
         {
-            new ClientService().updateClient(id, ClientName, ClientAdress, ClientEmail);
+            Console.WriteLine("Update controller");
+           return new ClientService().updateClient(id, client);
+            
         }
 
         // DELETE api/<ClientController>/5
-        [HttpDelete("{id:int}")]
-        public void Delete(int id)
+        [HttpDelete("{id}")]
+        public void Delete(string id)
         {
             new ClientService().deleteClient(id);
         }
