@@ -43,8 +43,9 @@ namespace SEN381_API_GROUP3.Controllers
 
         // DELETE api/<CoverageController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public TreatmentCoverage? Delete(string id)
         {
+            return new CoverageService().deleteCoverage(int.Parse(id));
         }
     }
 }

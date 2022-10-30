@@ -3,7 +3,6 @@ using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
 using System.Data;
 using System.Data.SqlClient;
-using static DevExpress.Xpo.DB.DataStoreLongrunnersWatch;
 
 namespace SEN381_API_GROUP3.Services
 {
