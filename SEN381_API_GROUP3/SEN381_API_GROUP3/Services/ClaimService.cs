@@ -25,7 +25,7 @@ namespace SEN381_API_GROUP3.Services
             {
                 while (reader.Read())
                 {
-                    modules.Add(new Claim(reader.GetInt32(0).ToString(), reader.GetString(1), reader.GetInt32(2).ToString(), reader.GetString(3), reader.GetInt32(4).ToString(), reader.GetString(5)));
+                    modules.Add(new Claim(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetInt32(4), reader.GetString(5)));
                 }
             }
 
@@ -44,7 +44,7 @@ namespace SEN381_API_GROUP3.Services
             {
                 while (reader.Read())
                 {
-                    modules.Add(new Claim(reader.GetInt32(0).ToString(), reader.GetInt32(1).ToString(), reader.GetInt32(2).ToString(), reader.GetString(3), reader.GetInt32(4).ToString(), reader.GetString(5)));
+                    modules.Add(new Claim(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetInt32(4), reader.GetString(5)));
 
                 }
             }
@@ -52,24 +52,24 @@ namespace SEN381_API_GROUP3.Services
 
             return modules[0];
         }
-        public void addNewClaim(int ClientID, int MedicalCondition, string PlaceOfTreament, int CallID, string ClaimeStatus)
+        public void addNewClaim(Claim claim)
         {
             string query = $@"INSERT into Claim
     (ClientID, MedicalCondition, placeOfTreatment, CallID, ClaimeStatus)
 VALUES
-    ('{ClientID}','{MedicalCondition}','{PlaceOfTreament}', '{CallID}', '{ClaimeStatus}')";
+    ('{claim.Client}',{claim.MedicalConditions},'{claim.PlaceOfTreatment}', {claim.CallDetails}, '{claim.ClaimeStatus}')";
 
-            SqlParameter ClientId = new SqlParameter("@ClientID", SqlDbType.Int);
+            SqlParameter ClientId = new SqlParameter("@ClientID", SqlDbType.VarChar);
             SqlParameter Medicalcondition = new SqlParameter("@MedicalCondition", SqlDbType.Int);
             SqlParameter PlaceOftreament = new SqlParameter("@PlaceOfTreament", SqlDbType.VarChar);
             SqlParameter CallId = new SqlParameter("@CallID", SqlDbType.Int);
             SqlParameter Claimestatus = new SqlParameter("@ClaimeStatus", SqlDbType.VarChar);
 
-            ClientId.Value = ClientID.ToString();
-            Medicalcondition.Value = MedicalCondition.ToString();
-            PlaceOftreament.Value = PlaceOfTreament.ToString();
-            CallId.Value = CallID.ToString();
-            Claimestatus.Value = ClaimeStatus.ToString();
+            ClientId.Value = claim.Client.ToString();
+            Medicalcondition.Value = claim.MedicalConditions;
+            PlaceOftreament.Value = claim.PlaceOfTreatment.ToString();
+            CallId.Value = claim.CallDetails;
+            Claimestatus.Value = claim.ClaimeStatus.ToString();
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
@@ -85,21 +85,21 @@ VALUES
             insertCommand.ExecuteNonQuery();
             scon.Close();
         }
-        public void UpdateClaim(int calimID, int ClientID, int MedicalCondition, string PlaceOfTreament, int CallID, string ClaimeStatus)
+        public void UpdateClaim(int id, Claim claim)
         {
-            string query = $@"UPDATE Claim set ClientID = '{ClientID}', MedicalCondition = '{MedicalCondition}', placeOfTreatment = '{PlaceOfTreament}', CallID = '{CallID}', ClaimeStatus = '{ClaimeStatus}' WHERE CLAIMID = '{calimID}'";
+            string query = $@"UPDATE Claim set ClientID = '{claim.Client}', MedicalCondition = {claim.MedicalConditions}, placeOfTreatment = '{claim.PlaceOfTreatment}', CallID = {claim.CallDetails}, ClaimeStatus = '{claim.ClaimeStatus}' WHERE CLAIMID = {id}";
 
-            SqlParameter ClientId = new SqlParameter("@ClientID", SqlDbType.Int);
+            SqlParameter ClientId = new SqlParameter("@ClientID", SqlDbType.VarChar);
             SqlParameter Medicalcondition = new SqlParameter("@MedicalCondition", SqlDbType.Int);
             SqlParameter PlaceOftreament = new SqlParameter("@PlaceOfTreament", SqlDbType.VarChar);
             SqlParameter CallId = new SqlParameter("@CallID", SqlDbType.Int);
             SqlParameter Claimestatus = new SqlParameter("@ClaimeStatus", SqlDbType.VarChar);
 
-            ClientId.Value = ClientID.ToString();
-            Medicalcondition.Value = MedicalCondition.ToString();
-            PlaceOftreament.Value = PlaceOfTreament.ToString();
-            CallId.Value = CallID.ToString();
-            Claimestatus.Value = ClaimeStatus.ToString();
+            ClientId.Value = claim.Client.ToString();
+            Medicalcondition.Value = claim.MedicalConditions;
+            PlaceOftreament.Value = claim.PlaceOfTreatment.ToString();
+            CallId.Value = claim.CallDetails;
+            Claimestatus.Value = claim.ClaimeStatus.ToString();
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
@@ -119,7 +119,8 @@ VALUES
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"DELETE from Claim WHERE CLAIMID = '{id}'";
+            string query = $@"DELETE FROM [dbo].[Claim]
+            WHERE CLAIMID = {id}";
             SqlCommand com = new SqlCommand(query, scon);
             com.ExecuteNonQuery();
             scon.Close();

@@ -2,14 +2,14 @@
 
 public class Claim
 {
-    string claimID;
+    int claimID;
     string client;
-    string medicalConditions;
+    int medicalConditions;
     string placeOfTreatment;
-    string? callDetails = null;
+    int  callDetails;
     string claimeStatus;
 
-    public Claim(string claimID, string client, string medicalConditions, string placeOfTreatment, string? callDetails, string claimeStatus)
+    public Claim(int claimID, string client, int medicalConditions, string placeOfTreatment, int callDetails, string claimeStatus)
     {
         this.claimID = claimID;
         this.client = client;
@@ -20,11 +20,11 @@ public class Claim
     }
 
 
-    public string ClaimID { get => claimID; set => claimID = value; }
+    public int ClaimID { get => claimID; set => claimID = value; }
     public string Client { get => client; set => client = value; }
-    public string MedicalConditions { get => medicalConditions; set => medicalConditions = value; }
+    public int MedicalConditions { get => medicalConditions; set => medicalConditions = value; }
     public string PlaceOfTreatment { get => placeOfTreatment; set => placeOfTreatment = value; }
-    public string? CallDetails { get => callDetails; set => callDetails = value; }
+    public int CallDetails { get => callDetails; set => callDetails = value; }
     public string ClaimeStatus { get => claimeStatus; set => claimeStatus = value; }
 
 

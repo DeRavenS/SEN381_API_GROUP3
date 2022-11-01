@@ -29,21 +29,21 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<ClaimsController>
         [HttpPost]
-        public void Post([FromBody] int ClientID, int Medicalcondition, string PlaceOfTreament, int CallID, string ClaimeStatus)
+        public void Post(Claim claim)
         {
-             new ClaimService().addNewClaim(ClientID, Medicalcondition, PlaceOfTreament, CallID, ClaimeStatus);
+             new ClaimService().addNewClaim(claim);
         }
 
         // PUT api/<ClaimsController>/5
         [HttpPut("{id}")]
-        public void Put([FromBody] int id, int ClientID, int MedicalCondition, string PlaceOfTreament, int CallID, string ClaimeStatus)
+        public void Put(int id, Claim claim)
         {
-            new ClaimService().UpdateClaim(id, ClientID,  MedicalCondition,  PlaceOfTreament,  CallID,  ClaimeStatus);
+            new ClaimService().UpdateClaim(id, claim);
         }
 
         // DELETE api/<ClaimsController>/5
         [HttpDelete("{id}")]
-        public void Delete([FromBody] int id)
+        public void Delete( int id)
         {
             new ClaimService().deleteClaim(id);
         }
