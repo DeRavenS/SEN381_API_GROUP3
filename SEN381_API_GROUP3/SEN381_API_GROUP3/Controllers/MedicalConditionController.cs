@@ -22,28 +22,28 @@ namespace SEN381_API_GROUP3.Controllers
 
         // GET api/<MedicalConditionController>/5
         [HttpGet("{id}")]
-        public List<MedicalCondition> Get(int id)
+        public MedicalCondition Get(int id)
         {
             return new MedicalConditionService().getMedicalConditionById(id);
         }
 
         // POST api/<MedicalConditionController>
         [HttpPost]
-        public void Post([FromBody] string MedicalConditionName, string MedicalConditionDescription, int TreatmentID)
+        public void Post(MedicalCondition medical)
         {
-            new MedicalConditionService().addMedicalCondition(MedicalConditionName,MedicalConditionDescription, TreatmentID);
+            new MedicalConditionService().addMedicalCondition(medical);
         }
 
         // PUT api/<MedicalConditionController>/5
         [HttpPut("{id}")]
-        public void Put([FromBody] int id, string MedicalConditionName, string MedicalConditionDescription, int TreatmentID)
+        public void Put( int id, MedicalCondition medical)
         {
-            new MedicalConditionService().updateMedicalCondition(id, MedicalConditionName, MedicalConditionDescription, TreatmentID);
+            new MedicalConditionService().updateMedicalCondition(id,medical);
         }
 
         // DELETE api/<MedicalConditionController>/5
         [HttpDelete("{id}")]
-        public void Delete([FromBody] int id)
+        public void Delete( int id)
         {
             new MedicalConditionService().deleteMedicalCondition(id);
         }
