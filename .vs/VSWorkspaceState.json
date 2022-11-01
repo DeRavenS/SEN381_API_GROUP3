@@ -9,6 +9,6 @@
     "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\shared",
     "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\shared\\models"
   ],
-  "SelectedNode": "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\shared\\models\\Claim.cs",
+  "SelectedNode": "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Controllers\\ClaimsController.cs",
   "PreviewInSolutionExplorer": false
 }

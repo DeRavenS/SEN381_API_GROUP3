@@ -49,7 +49,6 @@ namespace SEN381_API_GROUP3.Services
                 }
             }
 
-
             return modules[0];
         }
         public void addNewClaim(Claim claim)

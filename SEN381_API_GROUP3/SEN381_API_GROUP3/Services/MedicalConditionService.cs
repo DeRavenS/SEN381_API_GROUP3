@@ -23,7 +23,7 @@ namespace SEN381_API_GROUP3.Services
             {
                 while (reader.Read())
                 {
-                    modules.Add(new MedicalCondition(reader.GetInt32(0).ToString(), reader.GetString(1), reader.GetString(2), reader.GetInt32(3).ToString()));
+                    modules.Add(new MedicalCondition(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
 
                 }
             }
@@ -32,7 +32,7 @@ namespace SEN381_API_GROUP3.Services
             return modules;
         }
 
-        public List<MedicalCondition> getMedicalConditionById(int id)
+        public MedicalCondition getMedicalConditionById(int id)
         {
             List<MedicalCondition> modules = new List<MedicalCondition>();
             Connection con = new Connection();
@@ -44,23 +44,23 @@ namespace SEN381_API_GROUP3.Services
             {
                 while (reader.Read())
                 {
-                    modules.Add(new MedicalCondition(reader.GetInt32(0).ToString(), reader.GetString(1), reader.GetString(2), reader.GetInt32(3).ToString()));
+                    modules.Add(new MedicalCondition(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
                 }
             }
 
 
-            return modules;
+            return modules[0];
         }
-        public void addMedicalCondition(string MedicalConditionName, string MedicalConditionDescription, int TreatmentID) {
-            string query = $@"INSERT INTO MedicalCondition (MedicalConditionName, MedicalConditionDescription,TreatmentID)VALUES('{MedicalConditionName}', '{MedicalConditionDescription}', '{TreatmentID}')";
+        public void addMedicalCondition(MedicalCondition medical) {
+            string query = $@"INSERT INTO MedicalCondition (MedicalConditionName, MedicalConditionDescription,TreatmentID)VALUES('{medical.MedicalConditionName}', '{medical.MedicalConditionDescription}', '{medical.Treatments}')";
 
             SqlParameter MedicalConditionname = new SqlParameter("@MedicalConditionName", SqlDbType.VarChar);
             SqlParameter MedicalConditiondescription = new SqlParameter("@MedicalConditionDescription", SqlDbType.VarChar);
             SqlParameter TreatmentId = new SqlParameter("@TreatmentID", SqlDbType.Int);
 
-            MedicalConditionname.Value = MedicalConditionName.ToString();
-            MedicalConditiondescription.Value = MedicalConditionDescription.ToString();
-            TreatmentId.Value = TreatmentID.ToString();
+            MedicalConditionname.Value = medical.MedicalConditionName.ToString();
+            MedicalConditiondescription.Value = medical.MedicalConditionDescription.ToString();
+            TreatmentId.Value = medical.Treatments.ToString();
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
@@ -74,17 +74,17 @@ namespace SEN381_API_GROUP3.Services
             insertCommand.ExecuteNonQuery();
             scon.Close();
         }
-        public void updateMedicalCondition(int id,string MedicalConditionName, string MedicalConditionDescription, int TreatmentID)
+        public void updateMedicalCondition(int id,MedicalCondition medical)
         {
-            string query = $@"Update MedicalCondition set MedicalConditionName = '{MedicalConditionName}', MedicalConditionDescription = '{MedicalConditionDescription}', TreatmentID = {TreatmentID} WHERE MedicalConditionID = {id}";
+            string query = $@"Update MedicalCondition set MedicalConditionName = '{medical.MedicalConditionName}', MedicalConditionDescription = '{medical.MedicalConditionDescription}', TreatmentID = {medical.Treatments} WHERE MedicalConditionID = {id}";
 
             SqlParameter MedicalConditionname = new SqlParameter("@MedicalConditionName", SqlDbType.VarChar);
             SqlParameter MedicalConditiondescription = new SqlParameter("@MedicalConditionDescription", SqlDbType.VarChar);
             SqlParameter TreatmentId = new SqlParameter("@TreatmentID", SqlDbType.Int);
 
-            MedicalConditionname.Value = MedicalConditionName.ToString();
-            MedicalConditiondescription.Value = MedicalConditionDescription.ToString();
-            TreatmentId.Value = TreatmentID.ToString();
+            MedicalConditionname.Value = medical.MedicalConditionName.ToString();
+            MedicalConditiondescription.Value = medical.MedicalConditionDescription.ToString();
+            TreatmentId.Value = medical.Treatments.ToString();
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
@@ -102,7 +102,7 @@ namespace SEN381_API_GROUP3.Services
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"DELETE from MedicalCondition WHERE MedicalConditionID = '{id}'";
+            string query = $@"DELETE from MedicalCondition WHERE MedicalConditionID = {id}";
             SqlCommand com = new SqlCommand(query, scon);
             com.ExecuteNonQuery();
             scon.Close();
