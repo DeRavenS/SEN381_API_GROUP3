@@ -27,9 +27,10 @@ namespace SEN381_API_GROUP3.Controllers
         }
 
 
+
         // GET api/<ClientController>/5
         [HttpGet("{id}")]
-        public List<Client> Get(int id)
+        public Client Get(string id)
         {
             return new ClientService().getClientById(id);
         }

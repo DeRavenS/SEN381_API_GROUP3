@@ -18,6 +18,7 @@ namespace SEN381_API_GROUP3.Controllers
             return PolicyService.getPolicyList(size,page);
         }
 
+
         // GET api/<PolicyController>/5
         [HttpGet("{id}")]
         public Policy Get(int id)

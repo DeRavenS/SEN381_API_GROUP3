@@ -25,16 +25,14 @@ namespace SEN381_API_GROUP3.Services
             {
                 while (reader.Read())
                 {
-                    modules.Add(new Claim(reader.GetInt32(0).ToString(), reader.GetInt32(1).ToString(), reader.GetInt32(2).ToString(), reader.GetString(3), reader.GetInt32(4).ToString(), reader.GetString(5)));
-
-
+                    modules.Add(new Claim(reader.GetInt32(0).ToString(), reader.GetString(1), reader.GetInt32(2).ToString(), reader.GetString(3), reader.GetInt32(4).ToString(), reader.GetString(5)));
                 }
             }
 
 
             return modules;
         }
-        public List<Claim> getClaimById(int id)
+        public Claim getClaimById(int id)
         {
             List<Claim> modules = new List<Claim>();
             Connection con = new Connection();
@@ -52,7 +50,7 @@ namespace SEN381_API_GROUP3.Services
             }
 
 
-            return modules;
+            return modules[0];
         }
         public void addNewClaim(int ClientID, int MedicalCondition, string PlaceOfTreament, int CallID, string ClaimeStatus)
         {

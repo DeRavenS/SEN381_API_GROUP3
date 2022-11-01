@@ -22,7 +22,7 @@ namespace SEN381_API_GROUP3.Controllers
 
         // GET api/<ClaimsController>/5
         [HttpGet("{id}")]
-        public List<Claim> Get(int id)
+        public Claim Get(int id)
         {
             return new ClaimService().getClaimById(id);
         }
