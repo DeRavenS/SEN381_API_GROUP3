@@ -12,7 +12,7 @@ namespace SEN381_API_GROUP3.Services
             List<MedicalServiceProvider> provider = new List<MedicalServiceProvider>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[MedicalServiceProvidor] where MedicalServiceProvidorID = " + id, scon);
+            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[MedicalServiceProvider] where MedicalServiceProviderID = " + id, scon);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -36,7 +36,7 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[MedicalServiceProvidor] ORDER BY MedicalServiceProvidorID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;", scon);
+            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[MedicalServiceProvider] ORDER BY MedicalServiceProviderID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;", scon);
             command.Parameters.AddWithValue("@offset", offset);
             command.Parameters.AddWithValue("@size", size);
             SqlDataReader reader = command.ExecuteReader();
@@ -52,66 +52,60 @@ namespace SEN381_API_GROUP3.Services
 
             return modules;
         }
-        public void addMedicalServiceProvider(string MedicalServiceProvidorName, string MedicalServiceProvidorAddress, string MedicalServiceProvidorEmail, string MedicalServiceProvidorPhone)
+        public MedicalServiceProvider addMedicalServiceProvider(MedicalServiceProvider provider)
         {
-            string query = $@"INSERT INTO MedicalServiceProvider (MedicalServiceProviderName, MedicalServiceProviderAddress,MedicalServiceProviderEmail,MedicalServiceProviderPhone)VALUES('{MedicalServiceProvidorName}', '{MedicalServiceProvidorAddress}', '{MedicalServiceProvidorEmail}', '{MedicalServiceProvidorPhone}')";
-
-            SqlParameter MedicalServiceProvidorname = new SqlParameter("@MedicalServiceProviderName", SqlDbType.VarChar);
-            SqlParameter MedicalServiceProvidoraddress = new SqlParameter("@MedicalServiceProviderAddress", SqlDbType.VarChar);
-            SqlParameter MedicalServiceProvidoremail = new SqlParameter("@MedicalServiceProviderEmail", SqlDbType.VarChar);
-            SqlParameter MedicalServiceProvidorphone = new SqlParameter("@MedicalServiceProviderPhone", SqlDbType.VarChar);
-
-            MedicalServiceProvidorname.Value = MedicalServiceProvidorName.ToString();
-            MedicalServiceProvidoraddress.Value = MedicalServiceProvidorAddress.ToString();
-            MedicalServiceProvidoremail.Value = MedicalServiceProvidorEmail.ToString();
-            MedicalServiceProvidorphone.Value = MedicalServiceProvidorPhone.ToString();
+            string query = $@"INSERT INTO MedicalServiceProvider (MedicalServiceProviderName, MedicalServiceProviderAddress,MedicalServiceProviderEmail,MedicalServiceProviderPhone)"+
+                            " VALUES(@name, @address, @email, @phone)";
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
 
             SqlCommand insertCommand = new SqlCommand(query, scon);
-            insertCommand.Parameters.Add(MedicalServiceProvidorname);
-            insertCommand.Parameters.Add(MedicalServiceProvidoraddress);
-            insertCommand.Parameters.Add(MedicalServiceProvidorphone);
+            insertCommand.Parameters.AddWithValue("@name",provider.PolicyProviderName);
+            insertCommand.Parameters.AddWithValue("@address", provider.PolicyProviderAddresses);
+            insertCommand.Parameters.AddWithValue("@email", provider.PolicyProviderEmail);
+            insertCommand.Parameters.AddWithValue("@phone", provider.PolicProviderPhone);
 
             insertCommand.ExecuteNonQuery();
             scon.Close();
+            return provider;
         }
-        public void updateMedicalServiceProvider(int id, string MedicalServiceProvidorName, string MedicalServiceProvidorAddress, string MedicalServiceProvidorEmail, string MedicalServiceProvidorPhone)
+        public MedicalServiceProvider updateMedicalServiceProvider(MedicalServiceProvider provider)
         {
-            string query = $@"Update MedicalServiceProvidor set MedicalServiceProvidorName = '{MedicalServiceProvidorName}', MedicalServiceProvidorAddress = '{MedicalServiceProvidorAddress}', MedicalServiceProvidorEmail = '{MedicalServiceProvidorEmail}', MedicalServiceProvidorPhone='{MedicalServiceProvidorPhone}' WHERE MedicalServiceProvidorID = '{id}'";
-
-            SqlParameter MedicalServiceProvidorname = new SqlParameter("@MedicalServiceProvidorName", SqlDbType.VarChar);
-            SqlParameter MedicalServiceProvidoraddress = new SqlParameter("@MedicalServiceProvidorAddress", SqlDbType.VarChar);
-            SqlParameter MedicalServiceProvidoremail = new SqlParameter("@MedicalServiceProvidorEmail", SqlDbType.VarChar);
-            SqlParameter MedicalServiceProvidorphone = new SqlParameter("@MedicalServiceProvidorPhone", SqlDbType.VarChar);
-
-            MedicalServiceProvidorname.Value = MedicalServiceProvidorName.ToString();
-            MedicalServiceProvidoraddress.Value = MedicalServiceProvidorAddress.ToString();
-            MedicalServiceProvidoremail.Value = MedicalServiceProvidorEmail.ToString();
-            MedicalServiceProvidorphone.Value = MedicalServiceProvidorPhone.ToString();
+            string query = $@"Update MedicalServiceProvider set "+
+                "             MedicalServiceProviderName = @name, MedicalServiceProviderAddress = @address, MedicalServiceProviderEmail = @email, MedicalServiceProviderPhone=@phone WHERE MedicalServiceProviderID = @id";
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
 
             SqlCommand insertCommand = new SqlCommand(query, scon);
-            insertCommand.Parameters.Add(MedicalServiceProvidorname);
-            insertCommand.Parameters.Add(MedicalServiceProvidoraddress);
-            insertCommand.Parameters.Add(MedicalServiceProvidorphone);
+            insertCommand.Parameters.AddWithValue("@name", provider.PolicyProviderName);
+            insertCommand.Parameters.AddWithValue("@address", provider.PolicyProviderAddresses);
+            insertCommand.Parameters.AddWithValue("@email", provider.PolicyProviderEmail);
+            insertCommand.Parameters.AddWithValue("@phone", provider.PolicProviderPhone);
+            insertCommand.Parameters.AddWithValue("@id", provider.PolicyProviderID);
 
             insertCommand.ExecuteNonQuery();
             scon.Close();
+            return provider;
         }
-        public void deleteMedicalServiceProvider(int id)
+        public MedicalServiceProvider deleteMedicalServiceProvider(int id)
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"DELETE from MedicalServiceProvidor WHERE MedicalServiceProvidorID = '{id}'";
-            SqlCommand com = new SqlCommand(query, scon);
+            SqlCommand com = new SqlCommand("", scon);
+            string query = "DELETE from MedicalServiceProviderTreatment WHERE MedicalServiceProviderID = @id";
+            com.Parameters.AddWithValue("@id",id);
+            com.CommandText = query;
+            com.ExecuteNonQuery();
+
+            query = "DELETE from MedicalServiceProvider WHERE MedicalServiceProviderID = @id";
+            com.CommandText= query;
             com.ExecuteNonQuery();
             scon.Close();
+            return new MedicalServiceProvider();
         }
     }
 }
