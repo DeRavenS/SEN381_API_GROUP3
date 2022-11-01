@@ -23,7 +23,7 @@ namespace SEN381_API_GROUP3.Controllers
 
         // GET api/<TreatmentController>/5
         [HttpGet("{id}")]
-        public List<Treatment> Get(string id)
+        public Treatment Get(string id)
         {
             return new TreatmentService().getTreatmentsByID(id);
         }
@@ -32,6 +32,7 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpPost]
         public Treatment Post([FromBody] Treatment treatment)
         {
+            Console.WriteLine("Controller Start");
             return new TreatmentService().addNewTreatment(treatment);
 
         }
