@@ -40,28 +40,31 @@ namespace SEN381_API_GROUP3.Services
             //Query for providers
             List<string> idText = new List<string>();
             int idCount = 0;
-            foreach (string id in ids)
+            if (ids.Count != 0)
             {
-                idCount++;
-                command2.Parameters.AddWithValue($"@id{idCount}",id);
-                idText.Add($"@id{idCount}");
-            }
-
-            query = "Select MSP.MedicalServiceProviderID,MSP.MedicalServiceProviderName,MSP.MedicalServiceProviderAddress,MSP.MedicalServiceProviderEmail,MSP.MedicalServiceProviderPhone," +
-                "    MSPT.MSPTID,MSPT.ProviderStatus,MSPT.MedicalServiceProviderID,MSPT.TreatmentID " +
-                "    FROM MedicalServiceProvider MSP " +
-                "    INNER JOIN MedicalServiceProviderTreatment MSPT " +
-                "           ON MSPT.MedicalServiceProviderID = MSP.MedicalServiceProviderID " +
-                $"    WHERE MSPT.TreatmentID in ({string.Join(", ",idText)})";
-            command2.CommandText = query;
-            SqlDataReader reader2 = command2.ExecuteReader();
-            if (reader2.HasRows)
-            {
-                while (reader2.Read())
+                foreach (string id in ids)
                 {
-                    if (dic.TryGetValue(reader2.GetString(8), out Treatment treatment))
+                    idCount++;
+                    command2.Parameters.AddWithValue($"@id{idCount}", id);
+                    idText.Add($"@id{idCount}");
+                }
+
+                query = "Select MSP.MedicalServiceProviderID,MSP.MedicalServiceProviderName,MSP.MedicalServiceProviderAddress,MSP.MedicalServiceProviderEmail,MSP.MedicalServiceProviderPhone," +
+                    "    MSPT.MSPTID,MSPT.ProviderStatus,MSPT.MedicalServiceProviderID,MSPT.TreatmentID " +
+                    "    FROM MedicalServiceProvider MSP " +
+                    "    INNER JOIN MedicalServiceProviderTreatment MSPT " +
+                    "           ON MSPT.MedicalServiceProviderID = MSP.MedicalServiceProviderID " +
+                    $"    WHERE MSPT.TreatmentID in ({string.Join(", ", idText)})";
+                command2.CommandText = query;
+                SqlDataReader reader2 = command2.ExecuteReader();
+                if (reader2.HasRows)
+                {
+                    while (reader2.Read())
                     {
-                        dic[reader2.GetString(8)].MedicalServiceProviderTreatments.Add(new MedicalServiceProviderTreatment(reader2.GetInt32(5), reader2.GetString(6), new MedicalServiceProvider(reader2.GetInt32(0).ToString(), reader2.GetString(1), reader2.GetString(2), reader2.GetString(3), reader2.GetString(4))));
+                        if (dic.TryGetValue(reader2.GetString(8), out Treatment treatment))
+                        {
+                            dic[reader2.GetString(8)].MedicalServiceProviderTreatments.Add(new MedicalServiceProviderTreatment(reader2.GetInt32(5), reader2.GetString(6), new MedicalServiceProvider(reader2.GetInt32(0).ToString(), reader2.GetString(1), reader2.GetString(2), reader2.GetString(3), reader2.GetString(4))));
+                        }
                     }
                 }
             }

@@ -1,8 +1,14 @@
 {
   "ExpandedNodes": [
     "",
-    "\\SEN381_API_GROUP3"
+    "\\SEN381_API_GROUP3",
+    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3",
+    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Controllers",
+    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Database",
+    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\Services",
+    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\shared",
+    "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\shared\\models"
   ],
-  "SelectedNode": "\\SEN381_API_GROUP3\\SEN381_API_GROUP3.sln",
+  "SelectedNode": "\\SEN381_API_GROUP3\\SEN381_API_GROUP3\\shared\\models\\Claim.cs",
   "PreviewInSolutionExplorer": false
 }
