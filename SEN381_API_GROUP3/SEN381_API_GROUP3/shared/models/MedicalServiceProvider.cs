@@ -15,11 +15,15 @@ public class MedicalServiceProvider
         this.policProviderEmail = policProviderEmail;
         this.policProviderPhone = policProviderPhone;
     }
-    
-    
+    public MedicalServiceProvider()
+    {
+        
+    }
 
 
-   public string PolicyProviderID { get => policyProviderID; set => policyProviderID = value; }
+
+
+    public string PolicyProviderID { get => policyProviderID; set => policyProviderID = value; }
     public string PolicyProviderName { get => policyProviderName; set => policyProviderName = value; }
     public string PolicyProviderAddresses { get => policyProviderAddresses; set => policyProviderAddresses = value; }
     public string PolicyProviderEmail { get => policProviderEmail; set => policProviderEmail = value; }

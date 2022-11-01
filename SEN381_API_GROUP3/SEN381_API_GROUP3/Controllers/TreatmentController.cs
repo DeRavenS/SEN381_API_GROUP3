@@ -23,31 +23,32 @@ namespace SEN381_API_GROUP3.Controllers
 
         // GET api/<TreatmentController>/5
         [HttpGet("{id}")]
-        public List<Treatment> Get(int id)
+        public Treatment Get(string id)
         {
             return new TreatmentService().getTreatmentsByID(id);
         }
 
         // POST api/<TreatmentController>
         [HttpPost]
-        public void Post([FromBody] string TreatmentName, string TreatmentDescription, int MedicalServiceProvidorID)
+        public Treatment Post([FromBody] Treatment treatment)
         {
-            new TreatmentService().addNewTreatment(TreatmentName, TreatmentDescription, MedicalServiceProvidorID);
+            Console.WriteLine("Controller Start");
+            return new TreatmentService().addNewTreatment(treatment);
 
         }
 
         // PUT api/<TreatmentController>/5
         [HttpPut("{id}")]
-        public void Put([FromBody] int id, string TreatmentName, string TreatmentDescription, int MedicalServiceProvidorID)
+        public Treatment Put(string id,[FromBody] Treatment treatment)
         {
-            new TreatmentService().updateTreatment(id, TreatmentName, TreatmentDescription, MedicalServiceProvidorID);
+            return new TreatmentService().updateTreatment(id, treatment);
         }
 
         // DELETE api/<TreatmentController>/5
         [HttpDelete("{id}")]
-        public void Delete([FromBody] int id)
+        public Treatment Delete(string id)
         {
-            new TreatmentService().deleteTreatment(id);
+           return new TreatmentService().deleteTreatment(id);
         }
     }
 }

@@ -54,12 +54,12 @@ namespace SEN381_API_GROUP3.Services
         }
         public void addMedicalServiceProvider(string MedicalServiceProvidorName, string MedicalServiceProvidorAddress, string MedicalServiceProvidorEmail, string MedicalServiceProvidorPhone)
         {
-            string query = $@"INSERT INTO MedicalServiceProvidor (MedicalServiceProvidorName, MedicalServiceProvidorAddress,MedicalServiceProvidorEmail,MedicalServiceProvidorPhone)VALUES('{MedicalServiceProvidorName}', '{MedicalServiceProvidorAddress}', '{MedicalServiceProvidorEmail}', '{MedicalServiceProvidorPhone}')";
+            string query = $@"INSERT INTO MedicalServiceProvider (MedicalServiceProviderName, MedicalServiceProviderAddress,MedicalServiceProviderEmail,MedicalServiceProviderPhone)VALUES('{MedicalServiceProvidorName}', '{MedicalServiceProvidorAddress}', '{MedicalServiceProvidorEmail}', '{MedicalServiceProvidorPhone}')";
 
-            SqlParameter MedicalServiceProvidorname = new SqlParameter("@MedicalServiceProvidorName", SqlDbType.VarChar);
-            SqlParameter MedicalServiceProvidoraddress = new SqlParameter("@MedicalServiceProvidorAddress", SqlDbType.VarChar);
-            SqlParameter MedicalServiceProvidoremail = new SqlParameter("@MedicalServiceProvidorEmail", SqlDbType.VarChar);
-            SqlParameter MedicalServiceProvidorphone = new SqlParameter("@MedicalServiceProvidorPhone", SqlDbType.VarChar);
+            SqlParameter MedicalServiceProvidorname = new SqlParameter("@MedicalServiceProviderName", SqlDbType.VarChar);
+            SqlParameter MedicalServiceProvidoraddress = new SqlParameter("@MedicalServiceProviderAddress", SqlDbType.VarChar);
+            SqlParameter MedicalServiceProvidoremail = new SqlParameter("@MedicalServiceProviderEmail", SqlDbType.VarChar);
+            SqlParameter MedicalServiceProvidorphone = new SqlParameter("@MedicalServiceProviderPhone", SqlDbType.VarChar);
 
             MedicalServiceProvidorname.Value = MedicalServiceProvidorName.ToString();
             MedicalServiceProvidoraddress.Value = MedicalServiceProvidorAddress.ToString();
