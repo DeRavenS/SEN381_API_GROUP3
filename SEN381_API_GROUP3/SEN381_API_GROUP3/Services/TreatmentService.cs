@@ -96,17 +96,14 @@ namespace SEN381_API_GROUP3.Services
             SqlCommand command2 = new SqlCommand(query, scon);
             command2.Parameters.AddWithValue("@id", id);
             SqlDataReader reader2 = command2.ExecuteReader();
-
-            Treatment treatment = null;
             if (reader2.HasRows)
             {
                 while (reader2.Read())
                 {
                     modules[0].MedicalServiceProviderTreatments.Add(new MedicalServiceProviderTreatment(reader2.GetInt32(5), reader2.GetString(6), new MedicalServiceProvider(reader2.GetInt32(0).ToString(), reader2.GetString(1), reader2.GetString(2), reader2.GetString(3), reader2.GetString(4))));
                 }
-                return modules[0];
             }
-            else return treatment;
+            return modules[0];
         
         }
         public Treatment addNewTreatment(Treatment treatment) {

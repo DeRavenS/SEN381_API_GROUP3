@@ -30,23 +30,23 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<MedicalServiceProviderController>
         [HttpPost]
-        public void Post([FromBody] string MedicalServiceProvidorName, string MedicalServiceProvidorAddress, string MedicalServiceProvidorEmail, string MedicalServiceProvidorPhone)
+        public MedicalServiceProvider Post([FromBody] MedicalServiceProvider provider)
         {
-            new MedicalServiceProviderService().addMedicalServiceProvider( MedicalServiceProvidorName,  MedicalServiceProvidorAddress,  MedicalServiceProvidorEmail,  MedicalServiceProvidorPhone);
+            return new MedicalServiceProviderService().addMedicalServiceProvider(provider);
         }
 
         // PUT api/<MedicalServiceProviderController>/5
         [HttpPut("{id}")]
-        public void Put([FromBody] int id, string MedicalServiceProvidorName, string MedicalServiceProvidorAddress, string MedicalServiceProvidorEmail, string MedicalServiceProvidorPhone)
+        public MedicalServiceProvider Put([FromBody] MedicalServiceProvider provider)
         {
-            new MedicalServiceProviderService().updateMedicalServiceProvider( id,  MedicalServiceProvidorName,  MedicalServiceProvidorAddress,  MedicalServiceProvidorEmail,  MedicalServiceProvidorPhone);
+            return new MedicalServiceProviderService().updateMedicalServiceProvider(provider);
         }
 
         // DELETE api/<MedicalServiceProviderController>/5
         [HttpDelete("{id}")]
-        public void Delete([FromBody] int id)
+        public MedicalServiceProvider Delete(int id)
         {
-            new MedicalServiceProviderService().deleteMedicalServiceProvider(id);
+            return new MedicalServiceProviderService().deleteMedicalServiceProvider(id);
         }
     }
 }
