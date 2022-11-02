@@ -1,5 +1,6 @@
 ﻿using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
+using SEN381_API_GROUP3.shared.models;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -107,5 +108,27 @@ namespace SEN381_API_GROUP3.Services
             com.ExecuteNonQuery();
             scon.Close();
         }
+        public List<MedicalConditionTreatment> getMedicalConditon(int id) {
+            List<MedicalConditionTreatment> modules = new List<MedicalConditionTreatment>();
+            Connection con = new Connection();
+            SqlConnection scon = con.ConnectDatabase();
+            SqlCommand command = new SqlCommand($@"SELECT t.TreatmentID  ,t.TreatmentName, t.TreatmentName  FROM [dbo].[Treatment] t LEFT JOIN MedicalCondition ON   MedicalCondition.TreatmentID = t.TreatmentID 
+                WHERE  MedicalCondition.MedicalConditionID = '{id}'
+                ORDER BY t.TreatmentID  ", scon);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    modules.Add(new MedicalConditionTreatment(reader.GetString(0), reader.GetString(1), reader.GetString(2)));
+                }
+            }
+
+
+            return modules;
+
+        }
+
     }
 }
