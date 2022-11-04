@@ -21,7 +21,7 @@ namespace SEN381_API_GROUP3.Services
             cmd.Parameters.AddWithValue("@offset", SqlDbType.Int).Value = page;
             cmd.Parameters.AddWithValue("@row", SqlDbType.Int).Value = size;
 
-            SqlDataReader reader = cmd.ExecuteReader(); ;
+            SqlDataReader reader = cmd.ExecuteReader(); 
 
             if (reader.HasRows)
             {
@@ -129,11 +129,9 @@ namespace SEN381_API_GROUP3.Services
             List<MedicalConditionTreatment> modules = new List<MedicalConditionTreatment>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand($@"SELECT t.TreatmentID  ,t.TreatmentName, t.TreatmentDescription  FROM [dbo].[Treatment] t Inner JOIN MedicalConditionTreatment mt ON   
-            t.TreatmentID = mt.TreatmentID INNER JOIN 
-            MedicalCondition m on mt.MedicalConditionID = m.MedicalConditionID
-            WHERE  m.MedicalConditionID = '{id}'
-            ORDER BY t.TreatmentID", scon);
+            SqlCommand command = new SqlCommand($@"dbo.TreatmentByMedical", scon);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@MedicalID", SqlDbType.Int).Value = id;
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
