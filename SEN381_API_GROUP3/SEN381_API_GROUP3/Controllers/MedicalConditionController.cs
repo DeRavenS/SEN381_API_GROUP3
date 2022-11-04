@@ -59,12 +59,10 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpGet("{id}")]
         public List<MedicalConditionTreatment> Get(int id)
         {
-            Console.WriteLine("hallo woldsd");
-            Console.WriteLine(id);
             return new MedicalConditionService().getMedicalConditon(id);
         }
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(string id)
         {
             new MedicalConditionService().deleteMedicalTreatment(id);
         }

@@ -145,7 +145,7 @@ namespace SEN381_API_GROUP3.Services
             }
             return modules;
         }
-        public void deleteMedicalTreatment(int id) {
+        public void deleteMedicalTreatment(string id) {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
             SqlCommand com = new SqlCommand("dbo.DeleteMedicalTreatment", scon);
