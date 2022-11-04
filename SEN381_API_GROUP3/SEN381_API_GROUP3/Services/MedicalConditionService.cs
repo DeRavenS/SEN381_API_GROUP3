@@ -1,4 +1,5 @@
-﻿using SEN381_API_Group3.shared.models;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
 using SEN381_API_GROUP3.shared.models;
 using System.Data;
@@ -15,21 +16,21 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[MedicalCondition] ORDER BY MedicalConditionID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;", scon);
-            command.Parameters.AddWithValue("@offset", offset);
-            command.Parameters.AddWithValue("@size", size);
-            SqlDataReader reader = command.ExecuteReader();
+            SqlCommand cmd = new SqlCommand("dbo.AllMedicalConditions", scon);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@offset", SqlDbType.Int).Value = page;
+            cmd.Parameters.AddWithValue("@row", SqlDbType.Int).Value = size;
+
+            SqlDataReader reader = cmd.ExecuteReader(); ;
 
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    modules.Add(new MedicalCondition(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+                    modules.Add(new MedicalCondition(reader.GetInt32(0), reader.GetString(1), reader.GetString(2)));
 
                 }
             }
-
-
             return modules;
         }
 
@@ -38,14 +39,18 @@ namespace SEN381_API_GROUP3.Services
             List<MedicalCondition> modules = new List<MedicalCondition>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand($@"SELECT * FROM [dbo].[MedicalCondition] where MedicalConditionID = '{id}'", scon);
+
+            SqlCommand command = new SqlCommand("dbo.AllMedicalConditionsByID", scon);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@MedicalID", SqlDbType.Int).Value = id;
+
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    modules.Add(new MedicalCondition(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+                    modules.Add(new MedicalCondition(reader.GetInt32(0), reader.GetString(1), reader.GetString(2)));
                 }
             }
 
@@ -53,31 +58,19 @@ namespace SEN381_API_GROUP3.Services
             return modules[0];
         }
         public void addMedicalCondition(MedicalCondition medical) {
-            string query = $@"INSERT INTO MedicalCondition (MedicalConditionName, MedicalConditionDescription,TreatmentID)VALUES('{medical.MedicalConditionName}', '{medical.MedicalConditionDescription}', '{medical.Treatments}')";
-
-            SqlParameter MedicalConditionname = new SqlParameter("@MedicalConditionName", SqlDbType.VarChar);
-            SqlParameter MedicalConditiondescription = new SqlParameter("@MedicalConditionDescription", SqlDbType.VarChar);
-            SqlParameter TreatmentId = new SqlParameter("@TreatmentID", SqlDbType.Int);
-
-            MedicalConditionname.Value = medical.MedicalConditionName.ToString();
-            MedicalConditiondescription.Value = medical.MedicalConditionDescription.ToString();
-            TreatmentId.Value = medical.Treatments.ToString();
-
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
+            SqlCommand cmd = new SqlCommand("NewMedicalCondition", scon);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Medicalname", SqlDbType.Int).Value = medical.MedicalConditionName;
+            cmd.Parameters.AddWithValue("@MedicalDescription", SqlDbType.Int).Value = medical.MedicalConditionDescription;
 
-
-            SqlCommand insertCommand = new SqlCommand(query, scon);
-            insertCommand.Parameters.Add(MedicalConditionname);
-            insertCommand.Parameters.Add(MedicalConditiondescription);
-            insertCommand.Parameters.Add(TreatmentId);
-
-            insertCommand.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();
             scon.Close();
         }
         public void updateMedicalCondition(int id,MedicalCondition medical)
         {
-            string query = $@"Update MedicalCondition set MedicalConditionName = '{medical.MedicalConditionName}', MedicalConditionDescription = '{medical.MedicalConditionDescription}', TreatmentID = {medical.Treatments} WHERE MedicalConditionID = {id}";
+            string query = $@"Update MedicalCondition set MedicalConditionName = '{medical.MedicalConditionName}', MedicalConditionDescription = '{medical.MedicalConditionDescription}' WHERE MedicalConditionID = {id}";
 
             SqlParameter MedicalConditionname = new SqlParameter("@MedicalConditionName", SqlDbType.VarChar);
             SqlParameter MedicalConditiondescription = new SqlParameter("@MedicalConditionDescription", SqlDbType.VarChar);
@@ -85,7 +78,7 @@ namespace SEN381_API_GROUP3.Services
 
             MedicalConditionname.Value = medical.MedicalConditionName.ToString();
             MedicalConditiondescription.Value = medical.MedicalConditionDescription.ToString();
-            TreatmentId.Value = medical.Treatments.ToString();
+
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
@@ -94,27 +87,53 @@ namespace SEN381_API_GROUP3.Services
             SqlCommand insertCommand = new SqlCommand(query, scon);
             insertCommand.Parameters.Add(MedicalConditionname);
             insertCommand.Parameters.Add(MedicalConditiondescription);
-            insertCommand.Parameters.Add(TreatmentId);
 
             insertCommand.ExecuteNonQuery();
             scon.Close();
+        }
+        // Medical Condition Queries
+        public List<MedicalConditionTreatment> getAllMedicalConditionsTreatments(int page, int size)
+        {
+            int offset = (page - 1) * size;
+            List<MedicalConditionTreatment> modules = new List<MedicalConditionTreatment>();
+            Connection con = new Connection();
+            SqlConnection scon = con.ConnectDatabase();
+
+            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Treatment] ORDER BY TreatmentID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;", scon);
+            command.Parameters.AddWithValue("@offset", offset);
+            command.Parameters.AddWithValue("@size", size);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    modules.Add(new MedicalConditionTreatment(reader.GetString(0), reader.GetString(1), reader.GetString(2)));
+
+                }
+            }
+            return modules;
         }
         public void deleteMedicalCondition(int id)
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"DELETE from MedicalCondition WHERE MedicalConditionID = {id}";
-            SqlCommand com = new SqlCommand(query, scon);
+            SqlCommand com = new SqlCommand("dbo.DeleteMedicalCondition", scon);
+            com.CommandType = CommandType.StoredProcedure;
+            com.Parameters.AddWithValue("@param1", SqlDbType.Int).Value = id;
             com.ExecuteNonQuery();
             scon.Close();
         }
+        // Medical Condition Treatment
         public List<MedicalConditionTreatment> getMedicalConditon(int id) {
             List<MedicalConditionTreatment> modules = new List<MedicalConditionTreatment>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand($@"SELECT t.TreatmentID  ,t.TreatmentName, t.TreatmentName  FROM [dbo].[Treatment] t LEFT JOIN MedicalCondition ON   MedicalCondition.TreatmentID = t.TreatmentID 
-                WHERE  MedicalCondition.MedicalConditionID = '{id}'
-                ORDER BY t.TreatmentID  ", scon);
+            SqlCommand command = new SqlCommand($@"SELECT t.TreatmentID  ,t.TreatmentName, t.TreatmentDescription  FROM [dbo].[Treatment] t Inner JOIN MedicalConditionTreatment mt ON   
+            t.TreatmentID = mt.TreatmentID INNER JOIN 
+            MedicalCondition m on mt.MedicalConditionID = m.MedicalConditionID
+            WHERE  m.MedicalConditionID = '{id}'
+            ORDER BY t.TreatmentID", scon);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -124,11 +143,18 @@ namespace SEN381_API_GROUP3.Services
                     modules.Add(new MedicalConditionTreatment(reader.GetString(0), reader.GetString(1), reader.GetString(2)));
                 }
             }
-
-
             return modules;
-
         }
+        public void deleteMedicalTreatment(int id) {
+            Connection con = new Connection();
+            SqlConnection scon = con.ConnectDatabase();
+            SqlCommand com = new SqlCommand("dbo.DeleteMedicalTreatment", scon);
+            com.CommandType = CommandType.StoredProcedure;
+            com.Parameters.AddWithValue("@MedicalID", SqlDbType.Int).Value = id;
+            com.ExecuteNonQuery();
+            scon.Close();
+        }
+
 
     }
 }

@@ -51,6 +51,11 @@ namespace SEN381_API_GROUP3.Controllers
     [ApiController]
     public class MedicalConditionByTreatmentController : ControllerBase
     {
+        [HttpGet]
+        public List<MedicalConditionTreatment> Get(int page, int size)
+        {
+            return new MedicalConditionService().getAllMedicalConditionsTreatments(page, size);
+        }
         [HttpGet("{id}")]
         public List<MedicalConditionTreatment> Get(int id)
         {
@@ -58,5 +63,11 @@ namespace SEN381_API_GROUP3.Controllers
             Console.WriteLine(id);
             return new MedicalConditionService().getMedicalConditon(id);
         }
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+            new MedicalConditionService().deleteMedicalTreatment(id);
+        }
+        
     }
 }
