@@ -187,8 +187,9 @@ namespace SEN381_API_GROUP3.Services
             insertCommand.Parameters.AddWithValue("@id", package.PackageID);
             insertCommand.ExecuteNonQuery();
 
+
             insertCommand.Parameters.Clear();
-            query = "DELETE FROM PackagePolicyTreatmentCoverage WHERE PacakgeID = @id";
+            query = "DELETE FROM PackagePolicyTreatmentCoverage WHERE PackageID = @id";
             insertCommand.Parameters.AddWithValue("@id", package.PackageID);
             insertCommand.CommandText = query;
             insertCommand.ExecuteNonQuery();
@@ -212,6 +213,7 @@ namespace SEN381_API_GROUP3.Services
                 {
                     polType = reader.GetInt32(0);
                 }
+                reader.Close();
                 //PackagePolicyTreatmentCoverage Table
                 query = "INSERT INTO PackagePolicyTreatmentCoverage(PolicyTypeID,PackageID) VALUES(@polTypeID,@packID)";
                 insertCommand.Parameters.Clear();
@@ -236,13 +238,13 @@ namespace SEN381_API_GROUP3.Services
             com.ExecuteNonQuery();
 
             com.Parameters.Clear();
-            query = "DELETE FROM PolicyPackage WHERE PacakgeID=@id";
+            query = "DELETE FROM PolicyPackage WHERE PackageID=@id";
             com.Parameters.AddWithValue("@id", id);
             com.CommandText = query;
             com.ExecuteNonQuery();
 
             com.Parameters.Clear();
-            query = "DELETE FROM Package WHERE PacakgeID=@id";
+            query = "DELETE FROM Package WHERE PackageID=@id";
             com.Parameters.AddWithValue("@id", id);
             com.CommandText = query;
             com.ExecuteNonQuery();
