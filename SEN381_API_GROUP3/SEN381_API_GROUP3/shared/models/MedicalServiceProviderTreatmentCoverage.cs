@@ -2,10 +2,10 @@
 
 public class MedicalServiceProvidorTreatmentCoverage
 {
-    String MSPTCID;
+    string MSPTCID;
     TreatmentCoverage TreatmentCoverage;
     MedicalServiceProvider medicalServiceProvider;
-    String MSPTCStatus;
+    string MSPTCStatus;
 
     public MedicalServiceProvidorTreatmentCoverage(string mSPTCID, TreatmentCoverage treatmentCoverage, MedicalServiceProvider medicalServiceProvider, string mSPTCStatus)
     {
