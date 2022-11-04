@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SEN381_API_Group3.shared.models;
+using SEN381_API_GROUP3.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,34 +12,37 @@ namespace SEN381_API_GROUP3.Controllers
     {
         // GET: api/<PackageController>
         [HttpGet]
-        public List<PackageList> Get(int page, int size)
+        public List<Package> Get(int page, int size)
         {
-            return new string[] { "value1", "value2" };
+            return new PackageService().getPackageList(page,size);
         }
 
         // GET api/<PackageController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Package Get(string id)
         {
-            return "value";
+            return new PackageService().getPackageByID(int.Parse(id));
         }
 
         // POST api/<PackageController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public Package Post([FromBody] Package package)
         {
+            return new PackageService().addPackage(package);
         }
 
         // PUT api/<PackageController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public Package Put(string id, [FromBody] Package package)
         {
+            return new PackageService().updatePackage(package);
         }
 
         // DELETE api/<PackageController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public Package Delete(string id)
         {
+            return new PackageService().deletePackage(int.Parse(id));
         }
     }
 }

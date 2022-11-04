@@ -9,7 +9,7 @@ namespace SEN381_API_GROUP3.Services
 {
     public class PackageService
     {
-        public static Package getPackageByID(int id)
+        public Package getPackageByID(int id)
         {
             Package package = new Package();
             Connection con = new Connection();
@@ -55,7 +55,7 @@ namespace SEN381_API_GROUP3.Services
             return package;
         }
 
-        public static List<Package> getPackageList(int page, int size)
+        public List<Package> getPackageList(int page, int size)
         {
             int offset = (page - 1) * size;
             List<Package> packages = new List<Package>();
@@ -211,7 +211,7 @@ namespace SEN381_API_GROUP3.Services
             scon.Close();
             return package;
         }
-        public Package deleteMedicalServiceProvider(int id)
+        public Package deletePackage(int id)
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
