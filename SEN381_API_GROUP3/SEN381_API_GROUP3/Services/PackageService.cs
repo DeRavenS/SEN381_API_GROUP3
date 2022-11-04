@@ -11,22 +11,22 @@ namespace SEN381_API_GROUP3.Services
     {
         public Package getPackageByID(int id)
         {
-            Package package = new Package();
+            Package package = new Package("0",DateTime.Now, DateTime.Now, new List<PackageTreatmentCoverage>());
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
             string query = "SELECT DISTINCT" +
-               "               P.PackageID," +
+               "               P.PackageID,P.PackageStartDate,P.PackageEndDate," +
                "               T.TreatmentID,T.TreatmentName,T.TreatmentDescription, " +
                "               C.CoverageID, C.CoverageDESCRIPTION, C.NumberOfGeneralVisits, C.NumberOfSpecialistsVisits, C.TotalCoverageUser" +
                "           FROM " +
                "               Package P " +
-               "           LEFT JOIN " +
+               "           INNER JOIN " +
                "               PackagePolicyTreatmentCoverage PPTC ON P.PackageID = PPTC.PackageID" +
-               "           LEFT JOIN " +
+               "           INNER JOIN " +
                "               PolicyTreatmentCoverage PTC ON PTC.PolicyTypeID = PPTC.PolicyTypeID" +
-               "           LEFT JOIN" +
+               "           INNER JOIN" +
                "               Treatment T on T.TreatmentID=PTC.TreatmentID" +
-               "           LEFT JOIN" +
+               "           INNER JOIN" +
                "               Coverage C on C.CoverageID=PTC.CoverageID" +
                "           WHERE P.PackageID=@id";
             SqlCommand command = new SqlCommand(query, scon);
@@ -34,18 +34,18 @@ namespace SEN381_API_GROUP3.Services
             SqlDataReader reader = command.ExecuteReader();
 
             //Dictionaries for building objects
-            List<PackageTreatmentCoverage> lPTC = new List<PackageTreatmentCoverage>();
+
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    if (!lPTC.Exists((x)=>x.Treatment.TreatmentID == reader.GetString(1) && x.Coverage.CoverageID == reader.GetInt32(4)))
-                    {
-                        lPTC.Add(new PackageTreatmentCoverage(
-                            new Treatment(reader.GetString(1),reader.GetString(2),reader.GetString(3),new List<MedicalServiceProviderTreatment>()),
-                            new TreatmentCoverage(reader.GetInt32(4),reader.GetString(5),reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8)))
-                            );
-                    }
+                    package.TreatmentCoverages.Add(new PackageTreatmentCoverage(
+                        new Treatment(reader.GetString(3),reader.GetString(4),reader.GetString(5),new List<MedicalServiceProviderTreatment>()),
+                        new TreatmentCoverage(reader.GetInt32(6),reader.GetString(7),reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10)))
+                        );
+                    package.PackageID = reader.GetInt32(0).ToString();
+                    package.PackageStartDate = reader.GetDateTime(1);
+                    package.PackageEndDate = reader.GetDateTime(2);
                 }
             }
             else
