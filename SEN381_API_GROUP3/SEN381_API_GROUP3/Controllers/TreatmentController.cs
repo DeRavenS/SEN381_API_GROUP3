@@ -32,7 +32,6 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpPost]
         public Treatment Post([FromBody] Treatment treatment)
         {
-            Console.WriteLine("Controller Start");
             return new TreatmentService().addNewTreatment(treatment);
 
         }

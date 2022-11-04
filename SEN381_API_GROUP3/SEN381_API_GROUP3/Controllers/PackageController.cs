@@ -28,6 +28,7 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpPost]
         public Package Post([FromBody] Package package)
         {
+            Console.WriteLine("Start POST");
             return new PackageService().addPackage(package);
         }
 

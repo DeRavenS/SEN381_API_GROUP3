@@ -4,8 +4,8 @@ namespace SEN381_API_GROUP3.shared.models
 {
     public class PackageTreatmentCoverage
     {
-        private Treatment treatment;
-        private TreatmentCoverage coverage;
+        private Treatment? treatment;
+        private TreatmentCoverage? coverage;
 
         public PackageTreatmentCoverage(Treatment treatment, TreatmentCoverage coverage)
         {

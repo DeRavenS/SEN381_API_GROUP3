@@ -22,11 +22,11 @@ namespace SEN381_API_GROUP3.Services
                "               Package P " +
                "           LEFT JOIN " +
                "               PackagePolicyTreatmentCoverage PPTC ON P.PackageID = PPTC.PackageID" +
-               "           INNER JOIN " +
+               "           LEFT JOIN " +
                "               PolicyTreatmentCoverage PTC ON PTC.PolicyTypeID = PPTC.PolicyTypeID" +
-               "           INNER JOIN" +
+               "           LEFT JOIN" +
                "               Treatment T on T.TreatmentID=PTC.TreatmentID" +
-               "           INNER JOIN" +
+               "           LEFT JOIN" +
                "               Coverage C on C.CoverageID=PTC.CoverageID" +
                "           WHERE P.PackageID=@id";
             SqlCommand command = new SqlCommand(query, scon);
@@ -63,12 +63,12 @@ namespace SEN381_API_GROUP3.Services
             SqlConnection scon = con.ConnectDatabase();
 
             string query = "SELECT DISTINCT" +
-               "               P.PackageID,P.PackageStartDate,P.PackageEndDate" +
+               "               P.PackageID,P.PackageStartDate,P.PackageEndDate," +
                "               T.TreatmentID,T.TreatmentName,T.TreatmentDescription, " +
                "               C.CoverageID, C.CoverageDESCRIPTION, C.NumberOfGeneralVisits, C.NumberOfSpecialistsVisits, C.TotalCoverageUser" +
                "           FROM " +
                "               Package P " +
-               "           LEFT JOIN " +
+               "           INNER JOIN " +
                "               PackagePolicyTreatmentCoverage PPTC ON P.PackageID = PPTC.PackageID" +
                "           INNER JOIN " +
                "               PolicyTreatmentCoverage PTC ON PTC.PolicyTypeID = PPTC.PolicyTypeID" +
@@ -93,8 +93,8 @@ namespace SEN381_API_GROUP3.Services
                     {
                         packages.Add(new Package(reader.GetInt32(0).ToString(),reader.GetDateTime(1),reader.GetDateTime(2), 
                             new List<PackageTreatmentCoverage>() { new PackageTreatmentCoverage(
-                                new Treatment(reader.GetString(1),reader.GetString(2),reader.GetString(3),new List<MedicalServiceProviderTreatment>()),
-                                new TreatmentCoverage(reader.GetInt32(4),reader.GetString(5),reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8))
+                                new Treatment(reader.GetString(3),reader.GetString(4),reader.GetString(5),new List<MedicalServiceProviderTreatment>()),
+                                new TreatmentCoverage(reader.GetInt32(6),reader.GetString(7),reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(8))
                                 )
                             }
                         ));
@@ -102,8 +102,8 @@ namespace SEN381_API_GROUP3.Services
                     else
                     {
                         packages[packages.FindIndex((x)=>x.PackageID == reader.GetInt32(0).ToString())].TreatmentCoverages.Add(new PackageTreatmentCoverage(
-                                new Treatment(reader.GetString(1), reader.GetString(2), reader.GetString(3), new List<MedicalServiceProviderTreatment>()),
-                                new TreatmentCoverage(reader.GetInt32(4), reader.GetString(5), reader.GetInt32(6), reader.GetInt32(7), reader.GetInt32(8))
+                                new Treatment(reader.GetString(3), reader.GetString(4), reader.GetString(5), new List<MedicalServiceProviderTreatment>()),
+                                new TreatmentCoverage(reader.GetInt32(6), reader.GetString(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10))
                                 ));
                     }
                 }
@@ -122,10 +122,22 @@ namespace SEN381_API_GROUP3.Services
 
 
             SqlCommand insertCommand = new SqlCommand(query, scon);
-            insertCommand.Parameters.AddWithValue("@start", package.PackageStartDate);
-            insertCommand.Parameters.AddWithValue("@end", package.PackageEndDate);
+            insertCommand.Parameters.AddWithValue("@start", package.PackageStartDate !=null? package.PackageStartDate:null);
+            insertCommand.Parameters.AddWithValue("@end", package.PackageEndDate != null ? package.PackageEndDate:null);
 
             insertCommand.ExecuteNonQuery();
+
+            //Finding new PackageID
+            int packID = 0;
+            query = "SELECT TOP 1 PackageID FROM  Package ORDER BY PackageID DESC";
+            insertCommand.Parameters.Clear();
+            insertCommand.CommandText = query;
+            SqlDataReader reader = insertCommand.ExecuteReader();
+            while (reader.Read())
+            {
+                packID = reader.GetInt32(0);
+            }
+            reader.Close();
 
             int polType=0;
             foreach (PackageTreatmentCoverage item in package.TreatmentCoverages)
@@ -142,17 +154,18 @@ namespace SEN381_API_GROUP3.Services
                 query = "SELECT TOP 1 PolicyTypeID FROM  PolicyTreatmentCoverage ORDER BY PolicyTypeID DESC";
                 insertCommand.Parameters.Clear();
                 insertCommand.CommandText = query;
-                SqlDataReader reader = insertCommand.ExecuteReader();
+                reader = insertCommand.ExecuteReader();
                 while (reader.Read())
                 {
                     polType = reader.GetInt32(0);
                 }
+                reader.Close();
                 //PackagePolicyTreatmentCoverage Table
                 query = "INSERT INTO PackagePolicyTreatmentCoverage(PolicyTypeID,PackageID) VALUES(@polTypeID,@packID)";
                 insertCommand.Parameters.Clear();
                 insertCommand.CommandText = query;
                 insertCommand.Parameters.AddWithValue("@polTypeID", polType);
-                insertCommand.Parameters.AddWithValue("@packID", package.PackageID);
+                insertCommand.Parameters.AddWithValue("@packID", packID);
                 insertCommand.ExecuteNonQuery();
             }
             scon.Close();
@@ -217,7 +230,7 @@ namespace SEN381_API_GROUP3.Services
             SqlConnection scon = con.ConnectDatabase();
             SqlCommand com = new SqlCommand("", scon);
             string query = "";
-            query = "DELETE FROM PackagePolicyTreatmentCoverage WHERE PacakgeID=@id";
+            query = "DELETE FROM PackagePolicyTreatmentCoverage WHERE PackageID=@id";
             com.Parameters.AddWithValue("@id", id);
             com.CommandText = query;
             com.ExecuteNonQuery();
