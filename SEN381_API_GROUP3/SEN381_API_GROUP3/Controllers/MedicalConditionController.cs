@@ -3,8 +3,7 @@ using SEN381_API_GROUP3.Database;
 using SEN381_API_Group3.shared.models;
 using System.Data.SqlClient;
 using SEN381_API_GROUP3.Services;
-
-
+using SEN381_API_GROUP3.shared.models;
 
 namespace SEN381_API_GROUP3.Controllers
 {
@@ -18,8 +17,7 @@ namespace SEN381_API_GROUP3.Controllers
         {
             return new MedicalConditionService().getAllMedicalConditions(page, size);
         }
-
-
+            
         // GET api/<MedicalConditionController>/5
         [HttpGet("{id}")]
         public MedicalCondition Get(int id)
@@ -47,5 +45,27 @@ namespace SEN381_API_GROUP3.Controllers
         {
             new MedicalConditionService().deleteMedicalCondition(id);
         }
+    }
+
+    [Route("api/[controller]")]
+    [ApiController]
+    public class MedicalConditionByTreatmentController : ControllerBase
+    {
+        [HttpGet]
+        public List<MedicalConditionTreatment> Get(int page, int size)
+        {
+            return new MedicalConditionService().getAllMedicalConditionsTreatments(page, size);
+        }
+        [HttpGet("{id}")]
+        public List<MedicalConditionTreatment> Get(int id)
+        {
+            return new MedicalConditionService().getMedicalConditon(id);
+        }
+        [HttpDelete("{id}")]
+        public void Delete(string id)
+        {
+            new MedicalConditionService().deleteMedicalTreatment(id);
+        }
+        
     }
 }
