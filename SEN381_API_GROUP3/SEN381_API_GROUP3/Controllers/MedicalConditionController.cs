@@ -4,6 +4,7 @@ using SEN381_API_Group3.shared.models;
 using System.Data.SqlClient;
 using SEN381_API_GROUP3.Services;
 using SEN381_API_GROUP3.shared.models;
+using System.Security.Cryptography;
 
 namespace SEN381_API_GROUP3.Controllers
 {
@@ -26,10 +27,11 @@ namespace SEN381_API_GROUP3.Controllers
         }
 
         // POST api/<MedicalConditionController>
-        [HttpPost]
-        public void Post(MedicalCondition medical)
+        [HttpPost]//, List<string> Tid, int count
+        public bool Post([FromBody] InsertMedicalConditionRequest med)
         {
-            new MedicalConditionService().addMedicalCondition(medical);
+             new MedicalConditionService().addMedicalCondition(med);
+            return true;
         }
 
         // PUT api/<MedicalConditionController>/5
@@ -62,9 +64,9 @@ namespace SEN381_API_GROUP3.Controllers
             return new MedicalConditionService().getMedicalConditon(id);
         }
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public void Delete(int id,string Tid)
         {
-            new MedicalConditionService().deleteMedicalTreatment(id);
+            new MedicalConditionService().deleteMedicalTreatment(id, Tid);
         }
         
     }
