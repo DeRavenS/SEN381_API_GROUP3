@@ -1,5 +1,6 @@
 ﻿using DevExpress.Utils.CommonDialogs.Internal;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
 using SEN381_API_GROUP3.Services;
@@ -38,9 +39,9 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<ClientController>
         [HttpPost]
-        public Client Post(Client client)
+        public Client Post([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] Client client)
         {
-            Console.WriteLine("client name");
+            Console.WriteLine("Insert controller");
             return new ClientService().addNewClient(client);
 
         }
@@ -48,17 +49,17 @@ namespace SEN381_API_GROUP3.Controllers
 
         // PUT api/<ClientController>/5
         [HttpPut("{id}")]
-        public Client Put(string id, Client client)
+        public Client Put(string id,[FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] Client client)
         {
-            Console.WriteLine("Update controller");
+            
             return new ClientService().updateClient(id, client);
         }
 
         // DELETE api/<ClientController>/5
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public Client Delete(string id)
         {
-            new ClientService().deleteClient(id);
+            return new ClientService().deleteClient(id);
         }
     }
 }
