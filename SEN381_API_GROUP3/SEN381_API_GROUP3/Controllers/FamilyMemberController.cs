@@ -14,37 +14,37 @@ namespace SEN381_API_GROUP3.Controllers
     {
         // GET: api/<FamilyMemberController>
         [HttpGet]
-        public List<FamilyMember> Get(int page, int size)
+        public List<FamilyMember> Get(string clientID)
         {
-            return new FamilyMemberService().getAllFamilyMembers(page, size);
+            return new FamilyMemberService().getAllFamilyMembers(clientID);
         }
 
         // GET api/<FamilyMemberController>/5
         [HttpGet("{id}")]
-        public List<FamilyMember> Get(int id)
+        public FamilyMember Get(int id)
         {
             return new FamilyMemberService().getFamilyMemberById(id);
         }
 
         // POST api/<FamilyMemberController>
         [HttpPost]
-        public void Post([FromBody] FamilyMember family)
+        public FamilyMember Post([FromBody] FamilyMember family)
         {
-            new FamilyMemberService().addNewFamilyMember(family);
+            return new FamilyMemberService().addNewFamilyMember(family);
         }
 
         // PUT api/<FamilyMemberController>/5
         [HttpPut("{id}")]
-        public void Put([FromBody] int id, string FamilyMemberName, string FamilyMemberSurname, string FamilyMemberPhone, string FamilyMemberEmail, string FamilyMemberAddress, string FamilyIDnumber, string FamilyRole, string ClientID)
+        public FamilyMember Put([FromBody] FamilyMember family)
         {
-            new FamilyMemberService().updateFamilyMemer(id,FamilyMemberName, FamilyMemberSurname, FamilyMemberPhone, FamilyMemberEmail, FamilyMemberAddress, FamilyIDnumber, FamilyRole, ClientID);
+            return new FamilyMemberService().updateFamilyMember(family);
         }
 
         // DELETE api/<FamilyMemberController>/5
         [HttpDelete("{id}")]
-        public void Delete([FromBody] int id)
+        public FamilyMember Delete(int id)
         {
-            new FamilyMemberService().deleteFamilyMember(id);
+            return new FamilyMemberService().deleteFamilyMember(id);
         }
     }
 }

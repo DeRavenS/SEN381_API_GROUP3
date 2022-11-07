@@ -16,7 +16,7 @@ namespace SEN381_API_GROUP3.Services
             List<Client> modules = new List<Client>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-
+            Console.WriteLine($"{offset},{size}");
             string query = "SELECT " +
                 "                 C.ClientID,C.ClientName,C.ClientSurname,C.ClientAddress,C.clientEmail,C.ClientPhonenumber,C.ClientStatus,C.ClientAdHocNotes," +
                 "                 P.PolicyID,P.PolicyName,PS.startTime,PS.endTime, PS.PolicyStatusDate,PS.PolicyID " +
@@ -53,7 +53,7 @@ namespace SEN381_API_GROUP3.Services
                 }
             }
 
-
+            Console.WriteLine(modules.Count);
             return modules;
         }
 
@@ -204,6 +204,10 @@ namespace SEN381_API_GROUP3.Services
             com.Parameters.AddWithValue("@id",id);
             com.ExecuteNonQuery();
 
+            query = $@"DELETE from FamilyMember WHERE ClientID = @id";
+            com.CommandText = query;
+            com.ExecuteNonQuery();
+
             query = $@"DELETE from Client WHERE ClientID = @id";
             com.CommandText = query;
             com.ExecuteNonQuery();
@@ -234,7 +238,7 @@ namespace SEN381_API_GROUP3.Services
             string status = "";
 
             if (start == null && end == null) status = "Unspecified";
-            else if ((start == null && end >= DateTime.Today) || (start <= DateTime.Today && (end == null || end >= DateTime.Today))) status = "active";
+            else if ((start == null && end >= DateTime.Today) || (start <= DateTime.Today && (end == null || end >= DateTime.Today))) status = "Active";
             else if (start > DateTime.Today) status = "Coming Soon";
             return status;
         }
