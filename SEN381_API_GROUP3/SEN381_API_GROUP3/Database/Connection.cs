@@ -8,7 +8,7 @@ namespace SEN381_API_GROUP3.Database
         {
             try
             {
-                SqlConnection connection = new SqlConnection(@"Data Source = DESKTOP-IHTCUHK\SQLEXPRESS; Initial Catalog = UkupholisaHealthcare; Integrated Security = True");
+                SqlConnection connection = new SqlConnection(@"Data Source =; Initial Catalog = UkupholisaHealthcare; Integrated Security = True");
                 connection.Open();
                 Console.WriteLine("Connected");
                 return connection;
