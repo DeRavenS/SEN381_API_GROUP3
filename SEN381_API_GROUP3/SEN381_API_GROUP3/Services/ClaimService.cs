@@ -1,5 +1,6 @@
 ﻿using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
+using SEN381_API_GROUP3.shared.models;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -16,16 +17,15 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Claim] ORDER BY CLAIMID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;", scon);
-            command.Parameters.AddWithValue("@offset", offset);
-            command.Parameters.AddWithValue("@size", size);
-            SqlDataReader reader = command.ExecuteReader();
+            SqlCommand cmd = new SqlCommand("dbo.AllClaims", scon);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataReader reader = cmd.ExecuteReader();
 
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    modules.Add(new Claim(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetInt32(4), reader.GetString(5)));
+                    modules.Add(new Claim(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4)));
                 }
             }
 
@@ -37,90 +37,82 @@ namespace SEN381_API_GROUP3.Services
             List<Claim> modules = new List<Claim>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Claim] where CLAIMID = " + id, scon);
+            SqlCommand command = new SqlCommand("dbo.ClaimByID", scon)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            command.Parameters.AddWithValue("@ClaimID", SqlDbType.Int).Value = id;
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    modules.Add(new Claim(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2), reader.GetString(3), reader.GetInt32(4), reader.GetString(5)));
+                    modules.Add(new Claim(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4)));
 
                 }
             }
 
             return modules[0];
         }
-        public void addNewClaim(Claim claim)
+        public AddClaim addNewClaim(AddClaim claim)
         {
-            string query = $@"INSERT into Claim
-    (ClientID, MedicalCondition, placeOfTreatment, CallID, ClaimeStatus)
-VALUES
-    ('{claim.Client}',{claim.MedicalConditions},'{claim.PlaceOfTreatment}', {claim.CallDetails}, '{claim.ClaimeStatus}')";
-
-            SqlParameter ClientId = new SqlParameter("@ClientID", SqlDbType.VarChar);
-            SqlParameter Medicalcondition = new SqlParameter("@MedicalCondition", SqlDbType.Int);
-            SqlParameter PlaceOftreament = new SqlParameter("@PlaceOfTreament", SqlDbType.VarChar);
-            SqlParameter CallId = new SqlParameter("@CallID", SqlDbType.Int);
-            SqlParameter Claimestatus = new SqlParameter("@ClaimeStatus", SqlDbType.VarChar);
-
-            ClientId.Value = claim.Client.ToString();
-            Medicalcondition.Value = claim.MedicalConditions;
-            PlaceOftreament.Value = claim.PlaceOfTreatment.ToString();
-            CallId.Value = claim.CallDetails;
-            Claimestatus.Value = claim.ClaimeStatus.ToString();
-
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
+            SqlCommand sqlCommand = new SqlCommand("AddCallDetails", scon);
+            sqlCommand.CommandType = CommandType.StoredProcedure;
+            sqlCommand.Parameters.AddWithValue("@startTime", SqlDbType.VarChar).Value = claim.StartTime;
+            sqlCommand.Parameters.AddWithValue("@endTime", SqlDbType.VarChar).Value = claim.EndTime;
+            decimal callid = (decimal)sqlCommand.ExecuteScalar();
 
 
-            SqlCommand insertCommand = new SqlCommand(query, scon);
-            insertCommand.Parameters.Add(ClientId);
-            insertCommand.Parameters.Add(Medicalcondition);
-            insertCommand.Parameters.Add(PlaceOftreament);
-            insertCommand.Parameters.Add(CallId);
-            insertCommand.Parameters.Add(Claimestatus);
+            SqlCommand cmd = new SqlCommand("NewClaim", scon);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@clientID", SqlDbType.VarChar).Value = claim.Client;
+            cmd.Parameters.AddWithValue("@placeOfTreatment", SqlDbType.VarChar).Value = claim.PlaceOfTreatment;
+            cmd.Parameters.AddWithValue("@callIDs", SqlDbType.VarChar).Value = callid;
+            cmd.Parameters.AddWithValue("@ClaimeStatus", SqlDbType.VarChar).Value = claim.ClaimeStatus;
+            Console.WriteLine(callid);
+            decimal id = (decimal) cmd.ExecuteScalar();
 
-            insertCommand.ExecuteNonQuery();
+            Console.WriteLine(id);
+
+            SqlCommand command = new SqlCommand("AddnewClaimMedical", scon);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@claimID", SqlDbType.Int).Value = id;
+            command.Parameters.AddWithValue("@MedicalTreatmentID", SqlDbType.VarChar).Value = "";
+            foreach (int item in claim.MedicalConditions)
+            {
+                Console.WriteLine(item);
+                command.Parameters["@MedicalTreatmentID"].Value = item;
+                command.ExecuteNonQuery();
+            }
             scon.Close();
+            return claim;
         }
-        public void UpdateClaim(int id, Claim claim)
+        public Claim UpdateClaim(int id, Claim claim)
         {
-            string query = $@"UPDATE Claim set ClientID = '{claim.Client}', MedicalCondition = {claim.MedicalConditions}, placeOfTreatment = '{claim.PlaceOfTreatment}', CallID = {claim.CallDetails}, ClaimeStatus = '{claim.ClaimeStatus}' WHERE CLAIMID = {id}";
-
-            SqlParameter ClientId = new SqlParameter("@ClientID", SqlDbType.VarChar);
-            SqlParameter Medicalcondition = new SqlParameter("@MedicalCondition", SqlDbType.Int);
-            SqlParameter PlaceOftreament = new SqlParameter("@PlaceOfTreament", SqlDbType.VarChar);
-            SqlParameter CallId = new SqlParameter("@CallID", SqlDbType.Int);
-            SqlParameter Claimestatus = new SqlParameter("@ClaimeStatus", SqlDbType.VarChar);
-
-            ClientId.Value = claim.Client.ToString();
-            Medicalcondition.Value = claim.MedicalConditions;
-            PlaceOftreament.Value = claim.PlaceOfTreatment.ToString();
-            CallId.Value = claim.CallDetails;
-            Claimestatus.Value = claim.ClaimeStatus.ToString();
-
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-
-
-            SqlCommand updateCommand = new SqlCommand(query, scon);
-            updateCommand.Parameters.Add(ClientId);
-            updateCommand.Parameters.Add(Medicalcondition);
-            updateCommand.Parameters.Add(PlaceOftreament);
-            updateCommand.Parameters.Add(CallId);
-            updateCommand.Parameters.Add(Claimestatus);
+            SqlCommand updateCommand = new SqlCommand("UpdateClaim", scon);
+            updateCommand.CommandType = CommandType.StoredProcedure;
+            updateCommand.Parameters.AddWithValue("@ClaimIDs", SqlDbType.VarChar).Value = id;
+            updateCommand.Parameters.AddWithValue("@clientID", SqlDbType.VarChar).Value = claim.Client;
+            updateCommand.Parameters.AddWithValue("@Place", SqlDbType.VarChar).Value = claim.PlaceOfTreatment;
+            updateCommand.Parameters.AddWithValue("@CallID", SqlDbType.VarChar).Value = claim.CallDetails;
+            updateCommand.Parameters.AddWithValue("@stuatus", SqlDbType.Int).Value = claim.ClaimeStatus;
 
             updateCommand.ExecuteNonQuery();
             scon.Close();
+            return claim;
         }
         public void deleteClaim(int id)
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"DELETE FROM [dbo].[Claim]
-            WHERE CLAIMID = {id}";
-            SqlCommand com = new SqlCommand(query, scon);
+            SqlCommand com = new SqlCommand("dbo.DeleteClaimDetails", scon);
+            com.CommandType = CommandType.StoredProcedure;
+            com.Parameters.AddWithValue("@Id", SqlDbType.Int).Value = id;
             com.ExecuteNonQuery();
             scon.Close();
         }

@@ -2,6 +2,7 @@
 using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
 using SEN381_API_GROUP3.Services;
+using SEN381_API_GROUP3.shared.models;
 using System.Data.SqlClient;
 using static DevExpress.Xpo.DB.DataStoreLongrunnersWatch;
 
@@ -29,14 +30,14 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<ClaimsController>
         [HttpPost]
-        public void Post(Claim claim)
+        public AddClaim Post([FromBody] AddClaim claim)
         {
-             new ClaimService().addNewClaim(claim);
+           return  new ClaimService().addNewClaim(claim);
         }
 
         // PUT api/<ClaimsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, Claim claim)
+        public void Put(int id, [FromBody] Claim claim)
         {
             new ClaimService().UpdateClaim(id, claim);
         }
