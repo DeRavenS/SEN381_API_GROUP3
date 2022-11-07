@@ -1,5 +1,6 @@
 ﻿using SEN381_API_Group3.shared.models;
 using SEN381_API_GROUP3.Database;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -16,17 +17,38 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[Client] ORDER BY ClientID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;", scon);
+            string query = "SELECT " +
+                "                 C.ClientID,C.ClientName,C.ClientSurname,C.ClientAddress,C.clientEmail,C.ClientPhonenumber,C.ClientStatus,C.ClientAdHocNotes," +
+                "                 P.PolicyID,P.PolicyName,PS.startTime,PS.endTime, PS.PolicyStatusDate,PS.PolicyID " +
+                "           FROM " +
+                "               [dbo].[Client] C " +
+                "           LEFT JOIN " +
+                "               ClientPolicy CP ON C.ClientID=CP.ClientID " +
+                "           LEFT JOIN" +
+                "               Policy P ON CP.PolicyID = P.PolicyID " +
+                "           LEFT JOIN " +
+                "               PolicyStatus PS ON P.PolicyID=PS.PolicyID" +
+                "           WHERE C.ClientID IN (SELECT ClientID FROM Client ORDER BY ClientID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY)" +
+                "           ORDER BY C.ClientID ASC,PS.PolicyID ASC,PS.PolicyStatusDate DESC;";
+            SqlCommand command = new SqlCommand(query, scon);
             command.Parameters.AddWithValue("@offset", offset);
             command.Parameters.AddWithValue("@size", size);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
             {
+                int index = 0;
                 while (reader.Read())
                 {
-                    modules.Add(new Client(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6), reader.GetString(7), reader.GetString(8)));
+                    index = modules.FindIndex((x) => x.ClientID == reader.GetString(0));
 
+                    if (index == -1)
+                    {
+                        // Checking potential null values from LEFT JOIN
+                        ClientPolicy? policy = !reader.IsDBNull(8)? new ClientPolicy(reader.GetInt32(8).ToString(), reader.GetString(9), getPolicyStatus(reader.IsDBNull(10) ? null : reader.GetDateTime(10), reader.IsDBNull(11) ? null : reader.GetDateTime(11))) : null;
+
+                        modules.Add(new Client(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), policy, reader.GetString(6), reader.GetString(7)));
+                    }
 
                 }
             }
@@ -38,19 +60,41 @@ namespace SEN381_API_GROUP3.Services
         //Get Client by ID
         public Client getClientById(string id)
         {
-            Console.WriteLine("getting client");
+            string query = "SELECT " +
+                "                 C.ClientID,C.ClientName,C.ClientSurname,C.ClientAddress,C.clientEmail,C.ClientPhonenumber,C.ClientStatus,C.ClientAdHocNotes," +
+                "                 P.PolicyID,P.PolicyName,PS.startTime,PS.endTime, PS.PolicyStatusDate,PS.PolicyID " +
+                "           FROM " +
+                "               [dbo].[Client] C " +
+                "           LEFT JOIN " +
+                "               ClientPolicy CP ON C.ClientID=CP.ClientID " +
+                "           LEFT JOIN" +
+                "               Policy P ON CP.PolicyID = P.PolicyID " +
+                "           LEFT JOIN " +
+                "               PolicyStatus PS ON P.PolicyID=PS.PolicyID" +
+                "           WHERE C.ClientID =@id" +
+                "           ORDER BY C.ClientID ASC,PS.PolicyID ASC,PS.PolicyStatusDate DESC;";
+
             List<Client> modules = new List<Client>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand($"SELECT * FROM [dbo].[Client] where ClientID = '{id}'"  , scon);
+            SqlCommand command = new SqlCommand(query, scon);
+            command.Parameters.AddWithValue("@id",id);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
             {
+                int index = 0;
                 while (reader.Read())
                 {
-                    modules.Add(new Client(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6), reader.GetString(7), reader.GetString(8)));
+                    index = modules.FindIndex((x) => x.ClientID == reader.GetString(0));
 
+                    if (index == -1)
+                    {
+                        // Checking potential null values from LEFT JOIN
+                        ClientPolicy? policy = !reader.IsDBNull(8) ? new ClientPolicy(reader.GetInt32(8).ToString(), reader.GetString(9), getPolicyStatus(reader.IsDBNull(10) ? null : reader.GetDateTime(10), reader.IsDBNull(11) ? null : reader.GetDateTime(11))) : null;
+
+                        modules.Add(new Client(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), policy, reader.GetString(6), reader.GetString(7)));
+                    }
                 }
             }
 
@@ -61,44 +105,37 @@ namespace SEN381_API_GROUP3.Services
         //Create / Add new Client
         public Client addNewClient(Client client)
         {
-            string query = $@"INSERT INTO Client (ClientID, ClientName, ClientSurname, ClientAddress,clientEmail,ClientPhonenumber,ClientPolicies,ClientStatus,ClientAdHocNotes)VALUES('{primaryKey()}','{client.ClientName}','{client.ClientSurname}', '{client.ClientAddress}', '{client.ClientEmail}','{client.ClientPhoneNumber}','{client.Policies}', '{client.ClientStatus}', '{client.ClientAdHocNotes}')";
-
-            SqlParameter Clientid = new SqlParameter("@ClientID", SqlDbType.VarChar);
-            SqlParameter Clientname = new SqlParameter("@ClientName", SqlDbType.VarChar);
-            SqlParameter Clientsurname = new SqlParameter("@ClientSurname", SqlDbType.VarChar);
-            SqlParameter Clientadress = new SqlParameter("@ClientAdress", SqlDbType.VarChar);
-            SqlParameter Clientemail = new SqlParameter("@ClientEmail", SqlDbType.VarChar);
-            SqlParameter ClientphoneNumber = new SqlParameter("@ClientPhonenumber", SqlDbType.VarChar);
-            SqlParameter Clientpolicies = new SqlParameter("@ClientPolicies", SqlDbType.VarChar);
-            SqlParameter Clientstatus = new SqlParameter("@ClientStatus", SqlDbType.VarChar);
-            SqlParameter ClientadHocNotes = new SqlParameter("@ClientAdHocNotes", SqlDbType.VarChar);
-
-            Clientid.Value = client.ClientID.ToString();
-            Clientname.Value = client.ClientName.ToString();
-            Clientsurname.Value = client.ClientSurname.ToString();
-            Clientadress.Value = client.ClientAddress.ToString();
-            Clientemail.Value = client.ClientEmail.ToString();
-            ClientphoneNumber.Value = client.ClientPhoneNumber.ToString();
-            Clientpolicies.Value = client.Policies.ToString();
-            Clientstatus.Value = client.ClientStatus.ToString();
-            ClientadHocNotes.Value = client.ClientAdHocNotes.ToString();
+            Console.WriteLine("Inserting Client");
+            string query = $@"INSERT INTO Client (ClientID, ClientName, ClientSurname, ClientAddress,clientEmail,ClientPhonenumber,ClientStatus,ClientAdHocNotes)
+                              VALUES(@id,@ClientName,@ClientSurname, @ClientAddress, @ClientEmail,@ClientPhonenumber, @ClientStatus, @ClientAdHocNotes)";
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
 
             SqlCommand insertCommand = new SqlCommand(query, scon);
-            insertCommand.Parameters.Add(Clientid);
-            insertCommand.Parameters.Add(Clientname);
-            insertCommand.Parameters.Add(Clientsurname);
-            insertCommand.Parameters.Add(Clientadress);
-            insertCommand.Parameters.Add(Clientemail);
-            insertCommand.Parameters.Add(ClientphoneNumber);
-            insertCommand.Parameters.Add(Clientpolicies);
-            insertCommand.Parameters.Add(Clientstatus);
-            insertCommand.Parameters.Add(ClientadHocNotes);
+
+            insertCommand.Parameters.AddWithValue("@id", primaryKey());
+            insertCommand.Parameters.AddWithValue("@ClientName", client.ClientName);
+            insertCommand.Parameters.AddWithValue("@ClientSurname", client.ClientSurname);
+            insertCommand.Parameters.AddWithValue("@ClientAddress", client.ClientAddress);
+            insertCommand.Parameters.AddWithValue("@ClientEmail", client.ClientEmail);
+            insertCommand.Parameters.AddWithValue("@ClientPhonenumber", client.ClientPhoneNumber);
+            insertCommand.Parameters.AddWithValue("@ClientStatus", client.ClientStatus);
+            insertCommand.Parameters.AddWithValue("@ClientAdHocNotes", client.ClientAdHocNotes);
 
             insertCommand.ExecuteNonQuery();
+
+            if (client.Policy!=null && client.Policy.PolicyID != null)
+            {
+                insertCommand.Parameters.Clear();
+                query = "INSERT INTO ClientPolicy(ClientID,PolicyID)" +
+                    "    VALUES (@clientID,@policyID)";
+                insertCommand.Parameters.AddWithValue("@clientID",client.ClientID);
+                insertCommand.Parameters.AddWithValue("@policyID", client.Policy.PolicyID);
+                insertCommand.CommandText = query;
+                insertCommand.ExecuteNonQuery();
+            }
 
             scon.Close();
             return client;
@@ -109,51 +146,70 @@ namespace SEN381_API_GROUP3.Services
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"Update Client set ClientName = '{client.ClientName}',ClientSurname = '{client.ClientSurname}', ClientAddress = '{client.ClientAddress}', ClientEmail = '{client.ClientEmail}',ClientPhonenumber = '{client.ClientPhoneNumber}',ClientPolicies = '{client.Policies}',ClientStatus = '{client.ClientStatus}',ClientAdHocNotes = '{client.ClientAdHocNotes}' WHERE ClientID = '{id}'";
-            SqlParameter Clientname = new SqlParameter("@ClientName", SqlDbType.VarChar);
-            SqlParameter Clientsurname = new SqlParameter("@ClientSurname", SqlDbType.VarChar);
-            SqlParameter Clientadress = new SqlParameter("@ClientAdress", SqlDbType.VarChar);
-            SqlParameter Clientemail = new SqlParameter("@ClientEmail", SqlDbType.VarChar);
-            SqlParameter ClientphoneNumber = new SqlParameter("@ClientPhonenumber", SqlDbType.VarChar);
-            SqlParameter Clientpolicies = new SqlParameter("@ClientPolicies", SqlDbType.VarChar);
-            SqlParameter Clientstatus = new SqlParameter("@ClientStatus", SqlDbType.VarChar);
-            SqlParameter ClientadHocNotes = new SqlParameter("@ClientAdHocNotes", SqlDbType.VarChar);
-
-
-            Clientname.Value = client.ClientName.ToString();
-            Clientsurname.Value = client.ClientSurname.ToString();
-            Clientadress.Value = client.ClientAddress.ToString();
-            Clientemail.Value = client.ClientEmail.ToString();
-            ClientphoneNumber.Value = client.ClientPhoneNumber.ToString();
-            Clientpolicies.Value = client.Policies.ToString();
-            Clientstatus.Value = client.ClientStatus.ToString();
-            ClientadHocNotes.Value = client.ClientAdHocNotes.ToString();
+            string query = $@"UPDATE Client SET ClientName = @ClientName, ClientSurname = @ClientSurname, ClientAddress = @ClientAddress, 
+                                ClientEmail = @ClientEmail, ClientPhonenumber = @ClientPhonenumber, ClientStatus = @ClientStatus,
+                                ClientAdHocNotes = @ClientAdHocNotes WHERE ClientID = @id";
 
             SqlCommand updateCommand = new(query, scon);
 
-            updateCommand.Parameters.Add(Clientname);
-            updateCommand.Parameters.Add(Clientsurname);
-            updateCommand.Parameters.Add(Clientadress);
-            updateCommand.Parameters.Add(Clientemail);
-            updateCommand.Parameters.Add(ClientphoneNumber);
-            updateCommand.Parameters.Add(Clientpolicies);
-            updateCommand.Parameters.Add(Clientstatus);
-            updateCommand.Parameters.Add(ClientadHocNotes);
+            updateCommand.Parameters.AddWithValue("@ClientName",client.ClientName);
+            updateCommand.Parameters.AddWithValue("@ClientSurname", client.ClientSurname);
+            updateCommand.Parameters.AddWithValue("@ClientAddress", client.ClientAddress);
+            updateCommand.Parameters.AddWithValue("@ClientEmail", client.ClientEmail);
+            updateCommand.Parameters.AddWithValue("@ClientPhonenumber", client.ClientPhoneNumber);
+            updateCommand.Parameters.AddWithValue("@ClientStatus", client.ClientStatus);
+            updateCommand.Parameters.AddWithValue("@ClientAdHocNotes", client.ClientAdHocNotes);
+            updateCommand.Parameters.AddWithValue("@id", client.ClientID);
 
             updateCommand.ExecuteNonQuery();
+
+            if (client.Policy != null && client.Policy.PolicyID!=null)
+            {
+                updateCommand.Parameters.Clear();
+                query = "UPDATE ClientPolicy SET ClientID = @clientID, PolicyID = @policyID WHERE ClientID=@clientID";
+                updateCommand.Parameters.AddWithValue("@clientID", client.ClientID);
+                updateCommand.Parameters.AddWithValue("@policyID", client.Policy.PolicyID);
+                updateCommand.CommandText = query;
+                int rows = updateCommand.ExecuteNonQuery();
+                if ( rows == 0)
+                {
+                    updateCommand.Parameters.Clear();
+                    query = "INSERT INTO ClientPolicy(ClientID,PolicyID)" +
+                    "    VALUES (@clientID,@policyID)";
+                    updateCommand.Parameters.AddWithValue("@clientID", client.ClientID);
+                    updateCommand.Parameters.AddWithValue("@policyID", client.Policy.PolicyID);
+                    updateCommand.CommandText = query;
+                    updateCommand.ExecuteNonQuery();
+                };
+            }
+            else
+            {
+                updateCommand.Parameters.Clear();
+                query = "DELETE FROM ClientPolicy WHERE ClientID = @clientID";
+                updateCommand.Parameters.AddWithValue("@clientID", client.ClientID);
+                updateCommand.CommandText = query;
+                updateCommand.ExecuteNonQuery();
+            }
             scon.Close();
             return client;
         }
 
         //Delete Client
-        public void deleteClient(string id)
+        public Client deleteClient(string id)
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"DELETE from Client WHERE ClientID = '{id}'";
+            string query = $@"DELETE from ClientPolicy WHERE ClientID = @id";
             SqlCommand com = new SqlCommand(query, scon);
+            com.Parameters.AddWithValue("@id",id);
             com.ExecuteNonQuery();
+
+            query = $@"DELETE from Client WHERE ClientID = @id";
+            com.CommandText = query;
+            com.ExecuteNonQuery();
+
             scon.Close();
+            return new Client();
         }
         private string primaryKey()
         {
@@ -171,6 +227,16 @@ namespace SEN381_API_GROUP3.Services
             Console.WriteLine(pk);
             return pk;
 
+        }
+
+        private string getPolicyStatus(DateTime? start, DateTime? end)
+        {
+            string status = "";
+
+            if (start == null && end == null) status = "Unspecified";
+            else if ((start == null && end >= DateTime.Today) || (start <= DateTime.Today && (end == null || end >= DateTime.Today))) status = "active";
+            else if (start > DateTime.Today) status = "Coming Soon";
+            return status;
         }
 
     }
