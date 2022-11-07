@@ -7,11 +7,14 @@ public class FamilyMember{
     private string phoneNumber;
     private string email;
     private string address;
-    private string IdNumber;
     private string role;
-    private int clientID;
+    private string clientID;
 
-    public FamilyMember(string memberId, string memberName, string memberSurname, string phoneNumber, string email, string address, string idNumber, string role, int clientID)
+
+    public FamilyMember()
+    {
+    }
+    public FamilyMember(string memberId, string memberName, string memberSurname, string phoneNumber, string email, string address, string role, string clientID)
     {
         this.memberId = memberId;
         this.memberName = memberName;
@@ -19,7 +22,6 @@ public class FamilyMember{
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.address = address;
-        this.IdNumber = idNumber;
         this.role = role;
         this.clientID = clientID;
     }
@@ -30,9 +32,8 @@ public class FamilyMember{
     public string PhoneNumber { get => phoneNumber; set => phoneNumber = value; }
     public string Email { get => email; set => email = value; }
     public string Address { get => address; set => address = value; }
-    public string IdNumber1 { get => IdNumber; set => IdNumber = value; }
     public string Role { get => role; set => role = value; }
-    public int ClientID { get => clientID; set => clientID = value; }
+    public string ClientID { get => clientID; set => clientID = value; }
 }
 
     
