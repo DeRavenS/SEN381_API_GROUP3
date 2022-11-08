@@ -20,13 +20,13 @@ namespace SEN381_API_GROUP3.Services
                "               C.CoverageID, C.CoverageDESCRIPTION, C.NumberOfGeneralVisits, C.NumberOfSpecialistsVisits, C.TotalCoverageUser" +
                "           FROM " +
                "               Package P " +
-               "           INNER JOIN " +
+               "           LEFT JOIN " +
                "               PackagePolicyTreatmentCoverage PPTC ON P.PackageID = PPTC.PackageID" +
-               "           INNER JOIN " +
+               "           LEFT JOIN " +
                "               PolicyTreatmentCoverage PTC ON PTC.PolicyTypeID = PPTC.PolicyTypeID" +
-               "           INNER JOIN" +
+               "           LEFT JOIN" +
                "               Treatment T on T.TreatmentID=PTC.TreatmentID" +
-               "           INNER JOIN" +
+               "           LEFT JOIN" +
                "               Coverage C on C.CoverageID=PTC.CoverageID" +
                "           WHERE P.PackageID=@id";
             SqlCommand command = new SqlCommand(query, scon);
@@ -39,13 +39,16 @@ namespace SEN381_API_GROUP3.Services
             {
                 while (reader.Read())
                 {
-                    package.TreatmentCoverages.Add(new PackageTreatmentCoverage(
-                        new Treatment(reader.GetString(3),reader.GetString(4),reader.GetString(5),new List<MedicalServiceProviderTreatment>()),
-                        new TreatmentCoverage(reader.GetInt32(6),reader.GetString(7),reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10)))
-                        );
-                    package.PackageID = reader.GetInt32(0).ToString();
-                    package.PackageStartDate = reader.GetDateTime(1);
-                    package.PackageEndDate = reader.GetDateTime(2);
+                    if (!reader.IsDBNull(3))
+                    {
+                        package.TreatmentCoverages.Add(new PackageTreatmentCoverage(
+                            new Treatment(reader.GetString(3),reader.GetString(4),reader.GetString(5),new List<MedicalServiceProviderTreatment>()),
+                            new TreatmentCoverage(reader.GetInt32(6),reader.GetString(7),reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10)))
+                            );
+                    }
+                        package.PackageID = reader.GetInt32(0).ToString();
+                        package.PackageStartDate = reader.GetDateTime(1);
+                        package.PackageEndDate = reader.GetDateTime(2);
                 }
             }
             else
@@ -68,13 +71,13 @@ namespace SEN381_API_GROUP3.Services
                "               C.CoverageID, C.CoverageDESCRIPTION, C.NumberOfGeneralVisits, C.NumberOfSpecialistsVisits, C.TotalCoverageUser" +
                "           FROM " +
                "               Package P " +
-               "           INNER JOIN " +
+               "           LEFT JOIN " +
                "               PackagePolicyTreatmentCoverage PPTC ON P.PackageID = PPTC.PackageID" +
-               "           INNER JOIN " +
+               "           LEFT JOIN " +
                "               PolicyTreatmentCoverage PTC ON PTC.PolicyTypeID = PPTC.PolicyTypeID" +
-               "           INNER JOIN" +
+               "           LEFT JOIN" +
                "               Treatment T on T.TreatmentID=PTC.TreatmentID" +
-               "           INNER JOIN" +
+               "           LEFT JOIN" +
                "               Coverage C on C.CoverageID=PTC.CoverageID" +
                "           WHERE P.PackageID IN " +
                "               (SELECT PackageID FROM Package ORDER BY PackageID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY)";
@@ -89,22 +92,24 @@ namespace SEN381_API_GROUP3.Services
             {
                 while (reader.Read())
                 {
+                    Treatment treat = null;
+                    TreatmentCoverage tc = null;
+                    if (!reader.IsDBNull(3))treat = new Treatment(reader.GetString(3), reader.GetString(4), reader.GetString(5), new List<MedicalServiceProviderTreatment>());
+                    if(!reader.IsDBNull(6))tc = new TreatmentCoverage(reader.GetInt32(6), reader.GetString(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(8));
+
                     if ( !packages.Exists((x) => x.PackageID==reader.GetInt32(0).ToString() ))
                     {
-                        packages.Add(new Package(reader.GetInt32(0).ToString(),reader.GetDateTime(1),reader.GetDateTime(2), 
-                            new List<PackageTreatmentCoverage>() { new PackageTreatmentCoverage(
-                                new Treatment(reader.GetString(3),reader.GetString(4),reader.GetString(5),new List<MedicalServiceProviderTreatment>()),
-                                new TreatmentCoverage(reader.GetInt32(6),reader.GetString(7),reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(8))
-                                )
-                            }
+
+
+                        packages.Add(
+                            new Package(reader.GetInt32(0).ToString(),reader.GetDateTime(1),reader.GetDateTime(2), 
+                            treat!=null||tc!=null? new List<PackageTreatmentCoverage>() { new PackageTreatmentCoverage(treat,tc)}:new List<PackageTreatmentCoverage>()
                         ));
                     }
-                    else
+                    else if(treat!=null&&tc!=null)
                     {
-                        packages[packages.FindIndex((x)=>x.PackageID == reader.GetInt32(0).ToString())].TreatmentCoverages.Add(new PackageTreatmentCoverage(
-                                new Treatment(reader.GetString(3), reader.GetString(4), reader.GetString(5), new List<MedicalServiceProviderTreatment>()),
-                                new TreatmentCoverage(reader.GetInt32(6), reader.GetString(7), reader.GetInt32(8), reader.GetInt32(9), reader.GetInt32(10))
-                                ));
+                        packages[packages.FindIndex((x)=>x.PackageID == reader.GetInt32(0).ToString())].TreatmentCoverages.Add(
+                            new PackageTreatmentCoverage(treat,tc));
                     }
                 }
             }
@@ -129,7 +134,7 @@ namespace SEN381_API_GROUP3.Services
 
             //Finding new PackageID
             int packID = 0;
-            query = "SELECT TOP 1 PackageID FROM  Package ORDER BY PackageID DESC";
+            query = "SELECT TOP 1 PackageID FROM Package ORDER BY PackageID DESC";
             insertCommand.Parameters.Clear();
             insertCommand.CommandText = query;
             SqlDataReader reader = insertCommand.ExecuteReader();

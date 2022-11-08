@@ -28,22 +28,23 @@ namespace SEN381_API_GROUP3.Controllers
 
         // POST api/<PolicyController>
         [HttpPost]
-        public ICreatePolicyRequest Post([FromBody] ICreatePolicyRequest req)
+        public Policy Post([FromBody] Policy req)
         {
             return new PolicyService().createPolicy(req);
         }
 
         // PUT api/<PolicyController>/5
         [HttpPut("{id}")]
-        public IUpdatePolicyRequest Put(int id, [FromBody] IUpdatePolicyRequest policy)
+        public Policy Put(int id, [FromBody] Policy policy)
         {
             return new PolicyService().updatePolicy(id,policy);
         }
 
         // DELETE api/<PolicyController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public Policy Delete(int id)
         {
+            return new PolicyService().deletePolicy(id);
         }
     }
 }

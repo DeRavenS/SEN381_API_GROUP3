@@ -74,7 +74,6 @@ namespace SEN381_API_GROUP3.Services
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@MedicalID", SqlDbType.Int).Value = id;
             command.Parameters.AddWithValue("@TreatmentsID", SqlDbType.VarChar).Value = "";
-            Console.WriteLine(medical.IDs1[0]);
             foreach (string item in medical.IDs1)
             {
                 Console.WriteLine(item);
