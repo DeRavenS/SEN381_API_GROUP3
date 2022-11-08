@@ -26,10 +26,11 @@ namespace SEN381_API_GROUP3.Services
                 }
 
             }
+
             return modules;
 
         }
-        public EmployeeDetails GetEmployeeByEmail(string email)
+        public bool GetEmployeeByEmail(string name, string email, string pass)
         {
             List<EmployeeDetails> modules = new List<EmployeeDetails>();
             Connection con = new Connection();
@@ -38,7 +39,12 @@ namespace SEN381_API_GROUP3.Services
             {
                 CommandType = CommandType.StoredProcedure
             };
-            command.Parameters.AddWithValue("@Email", SqlDbType.VarChar).Value = email;
+            command.Parameters.AddWithValue("@Email", SqlDbType.VarChar).Value = name;
+            command.Parameters.AddWithValue("@Name", SqlDbType.VarChar).Value = email;
+            command.Parameters.AddWithValue("@pass", SqlDbType.VarChar).Value = pass;
+
+            EmployeeDetails details = new EmployeeDetails(name, email);
+
             SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
@@ -48,8 +54,19 @@ namespace SEN381_API_GROUP3.Services
 
                 }
             }
+            foreach (EmployeeDetails item in modules)
+            {
+                if (item.GetHashCode().Equals(employee.GetHashCode()))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
-            return modules[0];
+        return false;
 
         }
         public EmployeeDetails addEmployee(EmployeeDetails employee) {
