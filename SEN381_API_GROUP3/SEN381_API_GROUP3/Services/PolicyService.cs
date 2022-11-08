@@ -32,15 +32,20 @@ namespace SEN381_API_GROUP3.Services
                 polIndex = policies.FindIndex((x) => x.PolicyId == reader.GetInt32(0).ToString());
 
                 //seeing if package already exists and adding a new one if not
-                int packIndex = policies[polIndex].Package.FindIndex((x) => x.PackageID.Equals(reader.GetInt32(4).ToString()));
-                if (packIndex == -1) policies[polIndex].Package.Add(new Package(reader.GetInt32(4).ToString(), !reader.IsDBNull(5) ? reader.GetDateTime(5) : null, !reader.IsDBNull(6) ? reader.GetDateTime(6) : null, new List<PackageTreatmentCoverage>()));
+                if (!reader.IsDBNull(4))
+                {
 
-                //adding package details to specific package if not null
-                packIndex = policies[polIndex].Package.FindIndex((x) => x.PackageID.Equals(reader.GetInt32(4).ToString()));
-                if (!reader.IsDBNull(7)) policies[polIndex].Package[packIndex].TreatmentCoverages.Add(new PackageTreatmentCoverage(
-                                                                                                          new Treatment(reader.GetString(7), reader.GetString(8), reader.GetString(9), new List<MedicalServiceProviderTreatment>()),
-                                                                                                          new TreatmentCoverage(reader.GetInt32(10), reader.GetString(11), 0, 0, 0)
-                                                                                                      ));
+                    int packIndex = policies[polIndex].Package.FindIndex((x) => x.PackageID.Equals(reader.GetInt32(4).ToString()));
+
+                    if (packIndex == -1) policies[polIndex].Package.Add(new Package(reader.GetInt32(4).ToString(), !reader.IsDBNull(5) ? reader.GetDateTime(5) : null, !reader.IsDBNull(6) ? reader.GetDateTime(6) : null, new List<PackageTreatmentCoverage>()));
+
+                    //adding package details to specific package if not null
+                    packIndex = policies[polIndex].Package.FindIndex((x) => x.PackageID.Equals(reader.GetInt32(4).ToString()));
+                    if (!reader.IsDBNull(7)) policies[polIndex].Package[packIndex].TreatmentCoverages.Add(new PackageTreatmentCoverage(
+                                                                                                              new Treatment(reader.GetString(7), reader.GetString(8), reader.GetString(9), new List<MedicalServiceProviderTreatment>()),
+                                                                                                              new TreatmentCoverage(reader.GetInt32(10), reader.GetString(11), 0, 0, 0)
+                                                                                                          ));
+                }
             }
 
             return policies;
@@ -63,16 +68,19 @@ namespace SEN381_API_GROUP3.Services
                 {
                     if(policy.PolicyId==null) policy=new Policy(reader.GetInt32(0).ToString(), reader.GetString(1), getStatus(reader.GetDateTime(2),reader.GetDateTime(3)),  new List<Package>(), reader.GetDateTime(2), reader.GetDateTime(3));
 
-                    //seeing if package already exists and adding a new one if not
-                    int packIndex = policy.Package.FindIndex((x) => x.PackageID.Equals(reader.GetInt32(4).ToString()));
-                    if (packIndex == -1) policy.Package.Add(new Package(reader.GetInt32(4).ToString(), !reader.IsDBNull(5)?reader.GetDateTime(5):null,!reader.IsDBNull(6)?reader.GetDateTime(6):null,new List<PackageTreatmentCoverage>()));
+                    if (!reader.IsDBNull(4))
+                    {
+                        //seeing if package already exists and adding a new one if not
+                        int packIndex = policy.Package.FindIndex((x) => x.PackageID.Equals(reader.GetInt32(4).ToString()));
+                        if (packIndex == -1) policy.Package.Add(new Package(reader.GetInt32(4).ToString(), !reader.IsDBNull(5)?reader.GetDateTime(5):null,!reader.IsDBNull(6)?reader.GetDateTime(6):null,new List<PackageTreatmentCoverage>()));
                     
-                    //adding package details to specific package if not null
-                    packIndex = policy.Package.FindIndex((x) => x.PackageID.Equals(reader.GetInt32(4).ToString()));
-                    if (!reader.IsDBNull(7)) policy.Package[packIndex].TreatmentCoverages.Add(new PackageTreatmentCoverage(
-                                                                                                  new Treatment(reader.GetString(7), reader.GetString(8), reader.GetString(9), new List<MedicalServiceProviderTreatment>()), 
-                                                                                                  new TreatmentCoverage(reader.GetInt32(10),reader.GetString(11),0,0,0)
-                                                                                              ));
+                        //adding package details to specific package if not null
+                        packIndex = policy.Package.FindIndex((x) => x.PackageID.Equals(reader.GetInt32(4).ToString()));
+                        if (!reader.IsDBNull(7)) policy.Package[packIndex].TreatmentCoverages.Add(new PackageTreatmentCoverage(
+                                                                                                      new Treatment(reader.GetString(7), reader.GetString(8), reader.GetString(9), new List<MedicalServiceProviderTreatment>()), 
+                                                                                                      new TreatmentCoverage(reader.GetInt32(10),reader.GetString(11),0,0,0)
+                                                                                                  ));
+                    }
                 }
             }
             else policy=new Policy();
