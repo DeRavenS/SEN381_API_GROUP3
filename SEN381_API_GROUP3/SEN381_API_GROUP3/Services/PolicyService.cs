@@ -101,6 +101,8 @@ namespace SEN381_API_GROUP3.Services
             command.Parameters.AddWithValue("@endTime", req.StatusEndDate);
             command.Parameters.AddWithValue("@statusDate", DateTime.Today);
             int policyID=int.Parse(command.ExecuteScalar().ToString());
+            Console.WriteLine(policyID);
+            Console.WriteLine();
             //get inserted id
             foreach (Package package in req.Package)//Adding multiple inserts to 1 table
             {
