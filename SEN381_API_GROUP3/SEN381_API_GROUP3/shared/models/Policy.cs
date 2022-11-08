@@ -5,6 +5,7 @@ public class Policy
     private String policyId = "";
     private String policyName = "";
     private String policyStatus = "";
+    private DateTime startDate;
     private List<Package> package = new List<Package>();
 
     public Policy(string policyId, string policyName, string policyStatus, List<Package> package)
