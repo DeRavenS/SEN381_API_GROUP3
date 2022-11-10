@@ -16,8 +16,10 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
-            SqlCommand command = new SqlCommand("SELECT * FROM [dbo].[FamilyMember] WHERE ClientID = @clientID ORDER BY FamilyMemberID ;", scon);
+            SqlCommand command = new SqlCommand("dbo.GetAllFamilyMembers", scon);
+            command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@clientID", clientID);
+
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -39,8 +41,11 @@ namespace SEN381_API_GROUP3.Services
             List<FamilyMember> modules = new List<FamilyMember>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand($@"SELECT * FROM [dbo].[FamilyMember] where FamilyMemberID = @id", scon);
+
+            SqlCommand command = new SqlCommand($@"dbo.GetFamilyMemberByID", scon);
+            command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@id",id);
+
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -58,15 +63,15 @@ namespace SEN381_API_GROUP3.Services
         // Add new Family member
         public FamilyMember addNewFamilyMember(FamilyMember family)
         {
-            string query = @"INSERT INTO
-                             FamilyMember(FamilyMemberName, FamilyMemberSurname, FamilyMemberPhone,FamilyMemberEmail, FamilyMemberAddress, FamilyRole,ClientID)
-                             VALUES(@FamilyMemberName, @FamilyMemberSurname,@FamilyMemberPhone,@FamilyMemberEmail,@FamilyMemberAddress, @FamilyRole,@ClientID)";
+            string query = @"dbo.InsertFamilyMember";
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
 
             SqlCommand insertCommand = new SqlCommand(query, scon);
+            insertCommand.CommandType = CommandType.StoredProcedure;
+
             insertCommand.Parameters.AddWithValue("@FamilyMemberName", family.MemberName);
             insertCommand.Parameters.AddWithValue("@FamilyMemberSurname", family.MemberSurname);
             insertCommand.Parameters.AddWithValue("@FamilyMemberPhone", family.PhoneNumber);
@@ -83,16 +88,15 @@ namespace SEN381_API_GROUP3.Services
         // Update Family member
         public FamilyMember updateFamilyMember(FamilyMember family)
         {
-            string query = $@"UPDATE FamilyMember 
-                              SET FamilyMemberName = @FamilyMemberName, FamilyMemberSurname = @FamilyMemberSurname, FamilyMemberPhone = @FamilyMemberPhone,FamilyMemberEmail = @FamilyMemberPhone,
-                                  FamilyMemberAddress = @FamilyMemberAddress, FamilyRole = @FamilyRole, ClientID = @ClientID
-                              WHERE FamilyMemberID = @id;";
+            string query = $@"dbo.UpdateFamilyMember";
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
 
             SqlCommand insertCommand = new SqlCommand(query, scon);
+            insertCommand.CommandType = CommandType.StoredProcedure;
+
             insertCommand.Parameters.AddWithValue("@FamilyMemberName", family.MemberName);
             insertCommand.Parameters.AddWithValue("@FamilyMemberSurname", family.MemberSurname);
             insertCommand.Parameters.AddWithValue("@FamilyMemberPhone", family.PhoneNumber);
@@ -113,8 +117,9 @@ namespace SEN381_API_GROUP3.Services
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"DELETE from FamilyMember WHERE FamilyMemberID = @id";
+            string query = $@"dbo.DeleteFamilyMember";
             SqlCommand com = new SqlCommand(query, scon);
+            com.CommandType = CommandType.StoredProcedure;
             com.Parameters.AddWithValue("@id",id);
 
             com.ExecuteNonQuery();
