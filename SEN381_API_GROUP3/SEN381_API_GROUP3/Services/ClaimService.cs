@@ -72,10 +72,7 @@ namespace SEN381_API_GROUP3.Services
             cmd.Parameters.AddWithValue("@placeOfTreatment", SqlDbType.VarChar).Value = claim.PlaceOfTreatment;
             cmd.Parameters.AddWithValue("@callIDs", SqlDbType.VarChar).Value = callid;
             cmd.Parameters.AddWithValue("@ClaimeStatus", SqlDbType.VarChar).Value = claim.ClaimeStatus;
-            Console.WriteLine(callid);
             decimal id = (decimal) cmd.ExecuteScalar();
-
-            Console.WriteLine(id);
 
             SqlCommand command = new SqlCommand("AddnewClaimMedical", scon);
             command.CommandType = CommandType.StoredProcedure;
@@ -83,7 +80,6 @@ namespace SEN381_API_GROUP3.Services
             command.Parameters.AddWithValue("@MedicalTreatmentID", SqlDbType.VarChar).Value = "";
             foreach (int item in claim.MedicalConditions)
             {
-                Console.WriteLine(item);
                 command.Parameters["@MedicalTreatmentID"].Value = item;
                 command.ExecuteNonQuery();
             }

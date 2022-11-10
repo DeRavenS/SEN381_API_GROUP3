@@ -18,7 +18,8 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
-            SqlCommand command = new SqlCommand($@"SELECT * FROM [dbo].[CallDetails] ORDER BY CALLID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;", scon);
+            SqlCommand command = new SqlCommand($@"dbo.GetAllCalls", scon);
+            command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@offset", offset);
             command.Parameters.AddWithValue("@size", size);
             SqlDataReader reader = command.ExecuteReader();
@@ -44,7 +45,9 @@ namespace SEN381_API_GROUP3.Services
             List<CallDetails> modules = new List<CallDetails>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand($@"SELECT * FROM [dbo].[CallDetails] where CALLID = '{id}'", scon);
+            SqlCommand command = new SqlCommand($@"dbo.GetCallByID", scon);
+            command.Parameters.AddWithValue("@id",id);
+            command.CommandType = CommandType.StoredProcedure;
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -62,7 +65,7 @@ namespace SEN381_API_GROUP3.Services
         // Add new Call
         public void addNewCall(string StartTime, string EndTime)
         {
-            string query = $@"INSERT INTO CallDetails (startTime, endTime)VALUES('{StartTime}', '{EndTime}')";
+            string query = $@"dbo.InsertCallDetails";
 
             SqlParameter starttime = new SqlParameter("@StartTime", SqlDbType.VarChar);
             SqlParameter endtime = new SqlParameter("@EndTime", SqlDbType.VarChar);
@@ -78,7 +81,7 @@ namespace SEN381_API_GROUP3.Services
             SqlCommand insertCommand = new SqlCommand(query, scon);
             insertCommand.Parameters.Add(starttime);
             insertCommand.Parameters.Add(endtime);
-
+            insertCommand.CommandType = CommandType.StoredProcedure;
             insertCommand.ExecuteNonQuery();
             scon.Close();
         }
@@ -88,16 +91,13 @@ namespace SEN381_API_GROUP3.Services
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"Update CallDetails set startTime = '{StartTime}', endTime = '{EndTime}' WHERE CALLID = '{id}'";
-            SqlParameter Starttime = new SqlParameter("@ClientName", SqlDbType.VarChar);
-            SqlParameter Endtime = new SqlParameter("@ClientAdress", SqlDbType.VarChar);
-
-            Starttime.Value = StartTime.ToString();
-            Endtime.Value = EndTime.ToString();
+            string query = $@"dbo.UpdateCallDetails";
+            
             SqlCommand updateCommand = new(query, scon);
-            updateCommand.Parameters.Add(Starttime);
-            updateCommand.Parameters.Add(Endtime);
-
+            updateCommand.CommandType = CommandType.StoredProcedure;
+            updateCommand.Parameters.AddWithValue("@StartTime",StartTime);
+            updateCommand.Parameters.AddWithValue("@EndTime", EndTime);
+            updateCommand.Parameters.AddWithValue("@id", id);
 
             updateCommand.ExecuteNonQuery();
             scon.Close();
@@ -108,8 +108,10 @@ namespace SEN381_API_GROUP3.Services
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"DELETE from CallDetails WHERE CALLID = '{id}'";
+            string query = $@"dbo.DeleteCallDetails";
             SqlCommand com = new SqlCommand(query, scon);
+            com.CommandType = CommandType.StoredProcedure;
+            com.Parameters.AddWithValue("@id",id);
             com.ExecuteNonQuery();
             scon.Close();
         }
