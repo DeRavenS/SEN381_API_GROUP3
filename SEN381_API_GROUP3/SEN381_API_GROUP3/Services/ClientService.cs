@@ -16,7 +16,6 @@ namespace SEN381_API_GROUP3.Services
             List<Client> modules = new List<Client>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            Console.WriteLine($"{offset},{size}");
             string query = "SELECT " +
                 "                 C.ClientID,C.ClientName,C.ClientSurname,C.ClientAddress,C.clientEmail,C.ClientPhonenumber,C.ClientStatus,C.ClientAdHocNotes," +
                 "                 P.PolicyID,P.PolicyName,PS.startTime,PS.endTime, PS.PolicyStatusDate,PS.PolicyID " +

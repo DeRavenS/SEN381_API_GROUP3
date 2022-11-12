@@ -19,10 +19,11 @@ namespace SEN381_API_GROUP3.Controllers
         }
 
         // GET api/<LoginController>/5
-        [HttpGet("{email}")]
-        public EmployeeDetails Get(string email)
+        [HttpGet("login")]
+        public EmployeeDetails? Get(string email, string password, string name)
         {
-            return new LoginRegService().GetEmployeeByEmail(email);
+            Console.WriteLine("Login");
+            return new LoginRegService().GetEmployeeByInput(email, password, name);
         }
 
         // POST api/<LoginController>
