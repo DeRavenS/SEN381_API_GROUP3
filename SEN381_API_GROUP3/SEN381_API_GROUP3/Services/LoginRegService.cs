@@ -26,6 +26,7 @@ namespace SEN381_API_GROUP3.Services
                 }
 
             }
+
             return modules;
 
         }
@@ -45,8 +46,6 @@ namespace SEN381_API_GROUP3.Services
             SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
-
-                Console.WriteLine("Login Success");
                 while (reader.Read())
                 {
                     modules.Add(new EmployeeDetails(reader.GetString(0), reader.GetString(1), reader.GetString(2)));
@@ -54,8 +53,6 @@ namespace SEN381_API_GROUP3.Services
                 }
                 return modules[0];
             }
-            Console.WriteLine("Login Failed");
-            return null;
 
         }
         public EmployeeDetails? addEmployee(EmployeeDetails employee) {
