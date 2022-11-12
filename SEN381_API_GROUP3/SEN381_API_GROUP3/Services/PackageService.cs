@@ -14,22 +14,10 @@ namespace SEN381_API_GROUP3.Services
             Package package = new Package("0",DateTime.Now, DateTime.Now, new List<PackageTreatmentCoverage>());
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = "SELECT DISTINCT" +
-               "               P.PackageID,P.PackageStartDate,P.PackageEndDate," +
-               "               T.TreatmentID,T.TreatmentName,T.TreatmentDescription, " +
-               "               C.CoverageID, C.CoverageDESCRIPTION, C.NumberOfGeneralVisits, C.NumberOfSpecialistsVisits, C.TotalCoverageUser" +
-               "           FROM " +
-               "               Package P " +
-               "           LEFT JOIN " +
-               "               PackagePolicyTreatmentCoverage PPTC ON P.PackageID = PPTC.PackageID" +
-               "           LEFT JOIN " +
-               "               PolicyTreatmentCoverage PTC ON PTC.PolicyTypeID = PPTC.PolicyTypeID" +
-               "           LEFT JOIN" +
-               "               Treatment T on T.TreatmentID=PTC.TreatmentID" +
-               "           LEFT JOIN" +
-               "               Coverage C on C.CoverageID=PTC.CoverageID" +
-               "           WHERE P.PackageID=@id";
+            string query = "dbo.GetPackageByID";
             SqlCommand command = new SqlCommand(query, scon);
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+
             command.Parameters.AddWithValue("@id",id);
             SqlDataReader reader = command.ExecuteReader();
 
@@ -65,24 +53,10 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
-            string query = "SELECT DISTINCT" +
-               "               P.PackageID,P.PackageStartDate,P.PackageEndDate," +
-               "               T.TreatmentID,T.TreatmentName,T.TreatmentDescription, " +
-               "               C.CoverageID, C.CoverageDESCRIPTION, C.NumberOfGeneralVisits, C.NumberOfSpecialistsVisits, C.TotalCoverageUser" +
-               "           FROM " +
-               "               Package P " +
-               "           LEFT JOIN " +
-               "               PackagePolicyTreatmentCoverage PPTC ON P.PackageID = PPTC.PackageID" +
-               "           LEFT JOIN " +
-               "               PolicyTreatmentCoverage PTC ON PTC.PolicyTypeID = PPTC.PolicyTypeID" +
-               "           LEFT JOIN" +
-               "               Treatment T on T.TreatmentID=PTC.TreatmentID" +
-               "           LEFT JOIN" +
-               "               Coverage C on C.CoverageID=PTC.CoverageID" +
-               "           WHERE P.PackageID IN " +
-               "               (SELECT PackageID FROM Package ORDER BY PackageID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY)";
+            string query = "dbo.GetAllPackages";
 
             SqlCommand command = new SqlCommand(query, scon);
+            command.CommandType = System.Data.CommandType.StoredProcedure;
 
             command.Parameters.AddWithValue("@offset", offset);
             command.Parameters.AddWithValue("@size", size);
@@ -117,113 +91,62 @@ namespace SEN381_API_GROUP3.Services
 
             return packages;
         }
+
         public Package addPackage(Package package)
         {
-            string query = $@"INSERT INTO Package (PackageStartDate,PackageEndDate)" +
-                            " VALUES(@start, @end)";
+            string query = $@"dbo.InsertPackage";
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
 
             SqlCommand insertCommand = new SqlCommand(query, scon);
+            insertCommand.CommandType = System.Data.CommandType.StoredProcedure;
+
             insertCommand.Parameters.AddWithValue("@start", package.PackageStartDate !=null? package.PackageStartDate:null);
             insertCommand.Parameters.AddWithValue("@end", package.PackageEndDate != null ? package.PackageEndDate:null);
 
-            insertCommand.ExecuteNonQuery();
-
             //Finding new PackageID
-            int packID = 0;
-            query = "SELECT TOP 1 PackageID FROM Package ORDER BY PackageID DESC";
-            insertCommand.Parameters.Clear();
-            insertCommand.CommandText = query;
-            SqlDataReader reader = insertCommand.ExecuteReader();
-            while (reader.Read())
-            {
-                packID = reader.GetInt32(0);
-            }
-            reader.Close();
+            int packID = int.Parse(insertCommand.ExecuteScalar().ToString());
 
-            int polType=0;
+            //PackagePolicyTreatmentCoverage
             foreach (PackageTreatmentCoverage item in package.TreatmentCoverages)
             {
-                //PolicyTreatmentCoverage Table
-                query = "INSERT INTO PolicyTreatmentCoverage(TreatmentID,CoverageID) VALUES(@treatID,@covID)";
+                query = "dbo.InsertPackagePolicyTreatmentCoverage";
                 insertCommand.Parameters.Clear();
                 insertCommand.CommandText = query;
                 insertCommand.Parameters.AddWithValue("@treatID",item.Treatment.TreatmentID);
                 insertCommand.Parameters.AddWithValue("@covID", item.Coverage.CoverageID);
-                insertCommand.ExecuteNonQuery();
-
-                //Finding new PolicyTypeID
-                query = "SELECT TOP 1 PolicyTypeID FROM  PolicyTreatmentCoverage ORDER BY PolicyTypeID DESC";
-                insertCommand.Parameters.Clear();
-                insertCommand.CommandText = query;
-                reader = insertCommand.ExecuteReader();
-                while (reader.Read())
-                {
-                    polType = reader.GetInt32(0);
-                }
-                reader.Close();
-                //PackagePolicyTreatmentCoverage Table
-                query = "INSERT INTO PackagePolicyTreatmentCoverage(PolicyTypeID,PackageID) VALUES(@polTypeID,@packID)";
-                insertCommand.Parameters.Clear();
-                insertCommand.CommandText = query;
-                insertCommand.Parameters.AddWithValue("@polTypeID", polType);
                 insertCommand.Parameters.AddWithValue("@packID", packID);
                 insertCommand.ExecuteNonQuery();
             }
             scon.Close();
             return package;
         }
+
         public Package updatePackage(Package package)
         {
-            string query = $@"Update Package set " +
-                "             PackageStartDate = @start, PackageEndDate = @end WHERE PackageID= @id";
-
+            string query = $@"dbo.UpdatePackage";
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
 
             SqlCommand insertCommand = new SqlCommand(query, scon);
+            insertCommand.CommandType = System.Data.CommandType.StoredProcedure;
+
             insertCommand.Parameters.AddWithValue("@start", package.PackageStartDate);
             insertCommand.Parameters.AddWithValue("@end", package.PackageEndDate);
             insertCommand.Parameters.AddWithValue("@id", package.PackageID);
             insertCommand.ExecuteNonQuery();
 
-
-            insertCommand.Parameters.Clear();
-            query = "DELETE FROM PackagePolicyTreatmentCoverage WHERE PackageID = @id";
-            insertCommand.Parameters.AddWithValue("@id", package.PackageID);
-            insertCommand.CommandText = query;
-            insertCommand.ExecuteNonQuery();
-
-            int polType = 0;
             foreach (PackageTreatmentCoverage item in package.TreatmentCoverages)
             {
                 insertCommand.Parameters.Clear();
-                query = "INSERT INTO PolicyTreatmentCoverage(TreatmentID,CoverageID) VALUES(@treatID,@covID)";
+                query = "dbo.UpdatePackagePolicyTreatmentCoverage";
+                insertCommand.CommandText = query;
                 insertCommand.Parameters.AddWithValue("@treatID", item.Treatment.TreatmentID);
                 insertCommand.Parameters.AddWithValue("@covID", item.Coverage.CoverageID);
-                insertCommand.CommandText = query;
-                insertCommand.ExecuteNonQuery();
-
-                //Finding new PolicyTypeID
-                query = "SELECT TOP 1 PolicyTypeID FROM  PolicyTreatmentCoverage ORDER BY PolicyTypeID DESC";
-                insertCommand.Parameters.Clear();
-                insertCommand.CommandText = query;
-                SqlDataReader reader = insertCommand.ExecuteReader();
-                while (reader.Read())
-                {
-                    polType = reader.GetInt32(0);
-                }
-                reader.Close();
-                //PackagePolicyTreatmentCoverage Table
-                query = "INSERT INTO PackagePolicyTreatmentCoverage(PolicyTypeID,PackageID) VALUES(@polTypeID,@packID)";
-                insertCommand.Parameters.Clear();
-                insertCommand.CommandText = query;
-                insertCommand.Parameters.AddWithValue("@polTypeID", polType);
                 insertCommand.Parameters.AddWithValue("@packID", package.PackageID);
                 insertCommand.ExecuteNonQuery();
             }
@@ -233,25 +156,14 @@ namespace SEN381_API_GROUP3.Services
         }
         public Package deletePackage(int id)
         {
+            string query = "dbo.DeletePackage";
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand com = new SqlCommand("", scon);
-            string query = "";
-            query = "DELETE FROM PackagePolicyTreatmentCoverage WHERE PackageID=@id";
-            com.Parameters.AddWithValue("@id", id);
-            com.CommandText = query;
-            com.ExecuteNonQuery();
 
-            com.Parameters.Clear();
-            query = "DELETE FROM PolicyPackage WHERE PackageID=@id";
-            com.Parameters.AddWithValue("@id", id);
-            com.CommandText = query;
-            com.ExecuteNonQuery();
+            SqlCommand com = new SqlCommand(query, scon);
+            com.CommandType = System.Data.CommandType.StoredProcedure;
 
-            com.Parameters.Clear();
-            query = "DELETE FROM Package WHERE PackageID=@id";
             com.Parameters.AddWithValue("@id", id);
-            com.CommandText = query;
             com.ExecuteNonQuery();
 
             scon.Close();

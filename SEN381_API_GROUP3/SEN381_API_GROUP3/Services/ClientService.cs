@@ -14,24 +14,18 @@ namespace SEN381_API_GROUP3.Services
         {
             int offset = (page - 1) * size;
             List<Client> modules = new List<Client>();
+
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = "SELECT " +
-                "                 C.ClientID,C.ClientName,C.ClientSurname,C.ClientAddress,C.clientEmail,C.ClientPhonenumber,C.ClientStatus,C.ClientAdHocNotes," +
-                "                 P.PolicyID,P.PolicyName,PS.startTime,PS.endTime, PS.PolicyStatusDate,PS.PolicyID " +
-                "           FROM " +
-                "               [dbo].[Client] C " +
-                "           LEFT JOIN " +
-                "               ClientPolicy CP ON C.ClientID=CP.ClientID " +
-                "           LEFT JOIN" +
-                "               Policy P ON CP.PolicyID = P.PolicyID " +
-                "           LEFT JOIN " +
-                "               PolicyStatus PS ON P.PolicyID=PS.PolicyID" +
-                "           WHERE C.ClientID IN (SELECT ClientID FROM Client ORDER BY ClientID OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY)" +
-                "           ORDER BY C.ClientID ASC,PS.PolicyID ASC,PS.PolicyStatusDate DESC;";
+
+            string query = "dbo.GetAllClients";
+
             SqlCommand command = new SqlCommand(query, scon);
+            command.CommandType = CommandType.StoredProcedure;
+
             command.Parameters.AddWithValue("@offset", offset);
             command.Parameters.AddWithValue("@size", size);
+
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -51,35 +45,23 @@ namespace SEN381_API_GROUP3.Services
 
                 }
             }
-
-            Console.WriteLine(modules.Count);
             return modules;
         }
 
         //Get Client by ID
         public Client getClientById(string id)
         {
-            string query = "SELECT " +
-                "                 C.ClientID,C.ClientName,C.ClientSurname,C.ClientAddress,C.clientEmail,C.ClientPhonenumber,C.ClientStatus,C.ClientAdHocNotes," +
-                "                 P.PolicyID,P.PolicyName,PS.startTime,PS.endTime, PS.PolicyStatusDate,PS.PolicyID " +
-                "           FROM " +
-                "               [dbo].[Client] C " +
-                "           LEFT JOIN " +
-                "               ClientPolicy CP ON C.ClientID=CP.ClientID " +
-                "           LEFT JOIN" +
-                "               Policy P ON CP.PolicyID = P.PolicyID " +
-                "           LEFT JOIN " +
-                "               PolicyStatus PS ON P.PolicyID=PS.PolicyID" +
-                "           WHERE C.ClientID =@id" +
-                "           ORDER BY C.ClientID ASC,PS.PolicyID ASC,PS.PolicyStatusDate DESC;";
-
             List<Client> modules = new List<Client>();
+            string query = "dbo.GetClientByID";
+
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            SqlCommand command = new SqlCommand(query, scon);
-            command.Parameters.AddWithValue("@id",id);
-            SqlDataReader reader = command.ExecuteReader();
 
+            SqlCommand command = new SqlCommand(query, scon);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@id",id);
+
+            SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
                 int index = 0;
@@ -104,17 +86,17 @@ namespace SEN381_API_GROUP3.Services
         //Create / Add new Client
         public Client addNewClient(Client client)
         {
-            Console.WriteLine("Inserting Client");
-            string query = $@"INSERT INTO Client (ClientID, ClientName, ClientSurname, ClientAddress,clientEmail,ClientPhonenumber,ClientStatus,ClientAdHocNotes)
-                              VALUES(@id,@ClientName,@ClientSurname, @ClientAddress, @ClientEmail,@ClientPhonenumber, @ClientStatus, @ClientAdHocNotes)";
+            string query = $@"dbo.InsertClient";
 
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
 
             SqlCommand insertCommand = new SqlCommand(query, scon);
+            insertCommand.CommandType = CommandType.StoredProcedure;
 
-            insertCommand.Parameters.AddWithValue("@id", primaryKey());
+            string clientID = primaryKey();
+            insertCommand.Parameters.AddWithValue("@id", clientID);
             insertCommand.Parameters.AddWithValue("@ClientName", client.ClientName);
             insertCommand.Parameters.AddWithValue("@ClientSurname", client.ClientSurname);
             insertCommand.Parameters.AddWithValue("@ClientAddress", client.ClientAddress);
@@ -128,9 +110,8 @@ namespace SEN381_API_GROUP3.Services
             if (client.Policy!=null && client.Policy.PolicyID != null)
             {
                 insertCommand.Parameters.Clear();
-                query = "INSERT INTO ClientPolicy(ClientID,PolicyID)" +
-                    "    VALUES (@clientID,@policyID)";
-                insertCommand.Parameters.AddWithValue("@clientID",client.ClientID);
+                query = "dbo.InsertClientPolicy";
+                insertCommand.Parameters.AddWithValue("@clientID", clientID);
                 insertCommand.Parameters.AddWithValue("@policyID", client.Policy.PolicyID);
                 insertCommand.CommandText = query;
                 insertCommand.ExecuteNonQuery();
@@ -145,11 +126,10 @@ namespace SEN381_API_GROUP3.Services
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"UPDATE Client SET ClientName = @ClientName, ClientSurname = @ClientSurname, ClientAddress = @ClientAddress, 
-                                ClientEmail = @ClientEmail, ClientPhonenumber = @ClientPhonenumber, ClientStatus = @ClientStatus,
-                                ClientAdHocNotes = @ClientAdHocNotes WHERE ClientID = @id";
+            string query = $@"dbo.UpdateClient";
 
             SqlCommand updateCommand = new(query, scon);
+            updateCommand.CommandType = CommandType.StoredProcedure;
 
             updateCommand.Parameters.AddWithValue("@ClientName",client.ClientName);
             updateCommand.Parameters.AddWithValue("@ClientSurname", client.ClientSurname);
@@ -165,26 +145,16 @@ namespace SEN381_API_GROUP3.Services
             if (client.Policy != null && client.Policy.PolicyID!=null)
             {
                 updateCommand.Parameters.Clear();
-                query = "UPDATE ClientPolicy SET ClientID = @clientID, PolicyID = @policyID WHERE ClientID=@clientID";
+                query = "dbo.UpdateClientPolicy";
                 updateCommand.Parameters.AddWithValue("@clientID", client.ClientID);
                 updateCommand.Parameters.AddWithValue("@policyID", client.Policy.PolicyID);
                 updateCommand.CommandText = query;
-                int rows = updateCommand.ExecuteNonQuery();
-                if ( rows == 0)
-                {
-                    updateCommand.Parameters.Clear();
-                    query = "INSERT INTO ClientPolicy(ClientID,PolicyID)" +
-                    "    VALUES (@clientID,@policyID)";
-                    updateCommand.Parameters.AddWithValue("@clientID", client.ClientID);
-                    updateCommand.Parameters.AddWithValue("@policyID", client.Policy.PolicyID);
-                    updateCommand.CommandText = query;
-                    updateCommand.ExecuteNonQuery();
-                };
+                updateCommand.ExecuteNonQuery();
             }
             else
             {
                 updateCommand.Parameters.Clear();
-                query = "DELETE FROM ClientPolicy WHERE ClientID = @clientID";
+                query = "dbo.DeleteClientPolicy";
                 updateCommand.Parameters.AddWithValue("@clientID", client.ClientID);
                 updateCommand.CommandText = query;
                 updateCommand.ExecuteNonQuery();
@@ -198,17 +168,10 @@ namespace SEN381_API_GROUP3.Services
         {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"DELETE from ClientPolicy WHERE ClientID = @id";
+            string query = $@"dbo.DeleteClient";
             SqlCommand com = new SqlCommand(query, scon);
+            com.CommandType = CommandType.StoredProcedure;
             com.Parameters.AddWithValue("@id",id);
-            com.ExecuteNonQuery();
-
-            query = $@"DELETE from FamilyMember WHERE ClientID = @id";
-            com.CommandText = query;
-            com.ExecuteNonQuery();
-
-            query = $@"DELETE from Client WHERE ClientID = @id";
-            com.CommandText = query;
             com.ExecuteNonQuery();
 
             scon.Close();
