@@ -41,7 +41,6 @@ namespace SEN381_API_GROUP3.Controllers
         [HttpPost]
         public Client Post([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] Client client)
         {
-            Console.WriteLine("Insert controller");
             return new ClientService().addNewClient(client);
 
         }
