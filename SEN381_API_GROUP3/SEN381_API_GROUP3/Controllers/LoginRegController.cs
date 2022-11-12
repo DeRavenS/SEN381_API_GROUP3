@@ -11,13 +11,13 @@ namespace SEN381_API_GROUP3.Controllers
     [ApiController]
     public class LoginRegController : ControllerBase
     {
-        // GET: api/<LoginController>
-        [HttpGet]
-        public bool Get(EmployeeDetails employee)
-        {
-            return new LoginRegService().GetEmployeeDetails(employee);
+        //// GET: api/<LoginController>
+        //[HttpGet]
+        //public bool Get(EmployeeDetails employee)
+        //{
+        //    return new LoginRegService().GetEmployeeDetails(employee);
 
-        }
+        //}
 
         // GET api/<LoginController>/5
         [HttpGet("login")]

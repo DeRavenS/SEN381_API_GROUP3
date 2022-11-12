@@ -53,7 +53,7 @@ namespace SEN381_API_GROUP3.Services
                 }
                 return modules[0];
             }
-
+            return null;
         }
         public EmployeeDetails? addEmployee(EmployeeDetails employee) {
             Connection con = new Connection();
