@@ -14,11 +14,12 @@ namespace SEN381_API_GROUP3.Services
             List<Treatment> modules = new List<Treatment>();
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
+
             //Query for treatments
-            string query = "SELECT * FROM [dbo].[Treatment] T " +
-                "           ORDER BY T.TreatmentID" +
-                "           OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY;";
+            string query = "dbo.GetAllTreatments";
             SqlCommand command = new SqlCommand(query, scon);
+            command.CommandType = CommandType.StoredProcedure;
+
             command.Parameters.AddWithValue("@offset", offset);
             command.Parameters.AddWithValue("@size", size);
             SqlDataReader reader = command.ExecuteReader();
@@ -77,9 +78,10 @@ namespace SEN381_API_GROUP3.Services
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
 
-            string query = "SELECT * FROM [dbo].[Treatment] T " +
-                "           WHERE T.TreatmentID=@id ";
+            string query = "dbo.GetTreatmentByID";
             SqlCommand command = new SqlCommand(query, scon);
+            command.CommandType = CommandType.StoredProcedure;
+
             command.Parameters.AddWithValue("@id", id);
             SqlDataReader reader = command.ExecuteReader();
 
@@ -110,54 +112,54 @@ namespace SEN381_API_GROUP3.Services
         
         }
         public Treatment addNewTreatment(Treatment treatment) {
-            Console.WriteLine("Start Intsert");
+
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"INSERT INTO Treatment (TreatmentID,TreatmentName, TreatmentDescription)VALUES(@treatmentID,@treatmentName, @treatmentDescription)";
+            string query = $@"dbo.InsertTreatment";
+
             SqlCommand updateCommand = new SqlCommand(query, scon);
+            updateCommand.CommandType = CommandType.StoredProcedure;
+
             updateCommand.Parameters.AddWithValue("@treatmentID", treatment.TreatmentID);
             updateCommand.Parameters.AddWithValue("@treatmentName",treatment.TreatmentName);
             updateCommand.Parameters.AddWithValue("@treatmentDescription", treatment.TreatmentDescription);
 
             updateCommand.ExecuteNonQuery();
             //Joining Table
-            SqlCommand updateJoiningTableCommand = new("", scon);
-            query = $@"INSERT INTO MedicalServiceProviderTreatment (TreatmentID, MedicalServiceProviderID,ProviderStatus)VALUES(@treatmentID, @providerID,@providerStatus)";
+            query = $@"dbo.InsertMedicalServiceProviderTreatment";
+            updateCommand.CommandText = query;
             foreach (MedicalServiceProviderTreatment item in treatment.MedicalServiceProviderTreatments)
             {
-                updateJoiningTableCommand.CommandText = query;
-               
-                updateJoiningTableCommand.Parameters.AddWithValue("@treatmentID", treatment.TreatmentID);
-                updateJoiningTableCommand.Parameters.AddWithValue("@providerID", int.Parse(item.MedicalServiceProvidor.PolicyProviderID));
-                updateJoiningTableCommand.Parameters.AddWithValue("@providerStatus", item.ProviderStatus);
+                updateCommand.Parameters.Clear();
 
-                updateJoiningTableCommand.ExecuteNonQuery();
-                updateJoiningTableCommand.Parameters.Clear();
+                updateCommand.Parameters.AddWithValue("@treatmentID", treatment.TreatmentID);
+                updateCommand.Parameters.AddWithValue("@providerID", int.Parse(item.MedicalServiceProvidor.PolicyProviderID));
+                updateCommand.Parameters.AddWithValue("@providerStatus", item.ProviderStatus);
+
+                updateCommand.ExecuteNonQuery();
             }
 
             scon.Close();
             return treatment;
         }
         public Treatment updateTreatment(string id,Treatment treatment) {
+            
+            string query = $@"dbo.UpdateTreatment";
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            string query = $@"Update Treatment set TreatmentName = @treatmentName, TreatmentDescription = @treatmentDescription WHERE TreatmentID = @id";
-            SqlCommand updateCommand = new(query, scon);
+
+            SqlCommand updateCommand = new SqlCommand(query, scon);
+            updateCommand.CommandType = CommandType.StoredProcedure;
+
             updateCommand.Parameters.AddWithValue("@treatmentName",treatment.TreatmentName);
             updateCommand.Parameters.AddWithValue("@treatmentDescription", treatment.TreatmentDescription);
             updateCommand.Parameters.AddWithValue("@id", treatment.TreatmentID);
             updateCommand.ExecuteNonQuery();
 
-            //Joining Table
-            updateCommand.Parameters.Clear();
-            query = $"DELETE FROM MedicalServiceProviderTreatment WHERE TreatmentID=@id";
-            updateCommand.Parameters.AddWithValue("@id",treatment.TreatmentID);
-            updateCommand.CommandText = query;
-            updateCommand.ExecuteNonQuery();
-
-            query = $@"INSERT INTO MedicalServiceProviderTreatment (TreatmentID, MedicalServiceProviderID,ProviderStatus)VALUES(@treatmentID, @providerID,@providerStatus)";
+            query = $@"dbo.InsertMedicalServiceProviderTreatment";
             foreach (MedicalServiceProviderTreatment item in treatment.MedicalServiceProviderTreatments)
             {
+                updateCommand.Parameters.Clear();
                 updateCommand.CommandText = query;
 
                 updateCommand.Parameters.AddWithValue("@treatmentID", treatment.TreatmentID);
@@ -165,7 +167,6 @@ namespace SEN381_API_GROUP3.Services
                 updateCommand.Parameters.AddWithValue("@providerStatus", item.ProviderStatus);
 
                 updateCommand.ExecuteNonQuery();
-                updateCommand.Parameters.Clear();
             }
 
             scon.Close();
@@ -174,34 +175,16 @@ namespace SEN381_API_GROUP3.Services
         public Treatment deleteTreatment(string id) {
             Connection con = new Connection();
             SqlConnection scon = con.ConnectDatabase();
-            //Joining MedicalServiceProviderTreatment
-            string query = $@"DELETE from MedicalServiceProviderTreatment WHERE TreatmentID = @id";
+            string query = $@"dbo.DeleteTreatment";
+
             SqlCommand comMSPT = new SqlCommand(query, scon);
+            comMSPT.CommandType = CommandType.StoredProcedure;
+
             comMSPT.Parameters.AddWithValue("@id", id);
             comMSPT.ExecuteNonQuery();
-            //Joining PolicyTreatmentCoverage
-            query = $@"DELETE from PolicyTreatmentCoverage WHERE TreatmentID = @id";
-            SqlCommand comPTC = new SqlCommand(query, scon);
-            comPTC.Parameters.AddWithValue("@id", id);
-            comPTC.ExecuteNonQuery();
-            //Joining ClaimMedicalConditionTreatment
-            query = $@"DELETE from ClaimMedicalConditionTreatment WHERE MCTID IN (SELECT TreatmentID FROM MedicalConditionTreatment WHERE TreatmentID=@id)";
-            SqlCommand comCMCT = new SqlCommand(query, scon);
-            comCMCT.Parameters.AddWithValue("@id", id);
-            comCMCT.ExecuteNonQuery();
-            //Joining MedicalConditionTreatment
-            query = $@"DELETE from MedicalConditionTreatment WHERE TreatmentID = @id";
-            SqlCommand comMCT = new SqlCommand(query, scon);
-            comMCT.Parameters.AddWithValue("@id", id);
-            comMCT.ExecuteNonQuery();
-            //Treatment Table
-            query = $@"DELETE from Treatment WHERE TreatmentID = @id";
-            SqlCommand comFinal = new SqlCommand(query, scon);
-            comFinal.Parameters.AddWithValue("@id", id);
-            int effectedRows=comFinal.ExecuteNonQuery();
             scon.Close();
 
-            return effectedRows!=0? new Treatment():null;
+            return new Treatment();
         }
     }
 }

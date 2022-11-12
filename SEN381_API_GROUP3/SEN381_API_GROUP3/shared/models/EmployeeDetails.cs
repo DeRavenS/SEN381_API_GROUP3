@@ -6,6 +6,10 @@
         string employeeEmail;
         string employeePassword;
 
+        public EmployeeDetails()
+        {
+        }
+
         public EmployeeDetails(string employeeName, string employeeEmail, string employeePassword)
         {
             this.EmployeeName = employeeName;
