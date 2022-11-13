@@ -86,7 +86,7 @@ namespace SEN381_API_GROUP3.Services
             return true;
 
         }
-        public void updateMedicalCondition(int id,MedicalCondition medical)
+        public MedicalCondition updateMedicalCondition(int id,MedicalCondition medical)
         {
 
 
@@ -102,6 +102,7 @@ namespace SEN381_API_GROUP3.Services
 
             updateCommand.ExecuteNonQuery();
             scon.Close();
+            return medical;
         }
         // Medical Condition Queries
         public List<MedicalConditionTreatment> getAllMedicalConditionsTreatments(int page, int size)

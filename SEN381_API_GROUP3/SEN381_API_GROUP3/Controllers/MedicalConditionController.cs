@@ -36,9 +36,9 @@ namespace SEN381_API_GROUP3.Controllers
 
         // PUT api/<MedicalConditionController>/5
         [HttpPut("{id}")]
-        public void Put( int id, MedicalCondition medical)
+        public MedicalCondition Put( int id, MedicalCondition medical)
         {
-            new MedicalConditionService().updateMedicalCondition(id,medical);
+            return new MedicalConditionService().updateMedicalCondition(id,medical);
         }
 
         // DELETE api/<MedicalConditionController>/5
